@@ -25,6 +25,12 @@
 ### In your browser
 Open **<https://C-Fu.github.io/quran-database-malay/>** and type a word — results appear as you type (Malay *and* Arabic, combined).
 
+<p align="center">
+  <img src="screenshots/quran-screenshot.png" alt="QuestUI Quran search page — live on GitHub Pages (Arabic RTL + Basmeih Malay, gold-highlighted matches)" width="860">
+</p>
+
+> The live QuestUI search page — dark warm background, gold Cinzel headings, as-you-type search with matches highlighted. Each card shows **Arabic (right-to-left)** on top and the **Basmeih Malay** translation below.
+
 ### From the command line (no auth, no install)
 
 ```bash
