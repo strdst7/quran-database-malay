@@ -511,11 +511,6 @@ function showResultsState(count, total) {
   els.noResults.hidden = true;
   els.resultsMeta.hidden = false;
 
-  if (total === 0) {
-    showNoResultsState();
-    return;
-  }
-
   if (total < 100) {
     els.resultsMeta.textContent = total + ' ayat ditemui';
     els.showMore.hidden = true;
@@ -529,7 +524,15 @@ function showResultsState(count, total) {
   els.status.textContent = total + ' ayat ditemui';
 }
 
+// WR-01: self-contained — hide every other section so the no-results card is
+// correct regardless of the prior UI state, and surface the searched terms in
+// the body message (previously unreachable because the only caller passed no
+// terms).
 function showNoResultsState(terms) {
+  els.hero.classList.add('is-hidden');
+  els.featured.hidden = true;
+  els.loading.hidden = true;
+  els.error.hidden = true;
   els.resultsMeta.hidden = true;
   els.results.textContent = '';
   els.showMore.hidden = true;
@@ -570,7 +573,13 @@ function runSearch() {
     els.results.appendChild(renderCard(results[i], terms));
   }
 
-  showResultsState(showCount, results.length);
+  // WR-01: route zero-results straight to showNoResultsState(terms) so the body
+  // message naming the searched terms is actually populated.
+  if (results.length === 0) {
+    showNoResultsState(terms);
+  } else {
+    showResultsState(showCount, results.length);
+  }
 
   // Fuzzy suggestions for no-results
   if (results.length === 0) {
