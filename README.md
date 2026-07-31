@@ -142,6 +142,38 @@ The SQLite version adds:
 - Pre-populated **`juzs`** and **`hizbs`** lookup tables with ayah ranges
 - Views: `surah_stats` (ayat counts per surah), `ayah_with_translation` (joined ayah + translation)
 
+## API
+
+This repository publishes a static JSON API on GitHub Pages. The `api/` directory is gitignored and built by GitHub Actions on every push to `main`, then deployed to GitHub Pages.
+
+Base URL: `https://C-Fu.github.io/quran-database-malay`
+
+| Endpoint | Description |
+| --- | --- |
+| `/api/surah/{n}.json` | All ayahs of surah `n` (1–114), each with Arabic + Basmeih Malay translation |
+| `/api/search.json` | Full search index — all 6,236 ayahs with Arabic + Malay |
+| `/api/surahs.json` | Metadata for all 114 surahs |
+
+Every verse object has exactly 5 fields: `arabic`, `malay`, `surah`, `ayah`, `id` (global ayah id 1–6236).
+
+### Fetch a surah
+
+```bash
+curl https://C-Fu.github.io/quran-database-malay/api/surah/2.json
+```
+
+### Search the Malay translation for a keyword
+
+```bash
+curl https://C-Fu.github.io/quran-database-malay/api/search.json | jq '.[] | select(.malay | contains("<keyword>"))'
+```
+
+### List all surahs
+
+```bash
+curl https://C-Fu.github.io/quran-database-malay/api/surahs.json
+```
+
 ## Roadmap
 
 We welcome contributions! Here's the planned roadmap for this project. Pick any item and submit a PR.
