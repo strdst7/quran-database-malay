@@ -84,6 +84,41 @@ body {
   padding: 8px 16px;
 }
 
+/* ─── Repo link (top-right, back to source) ─────────────────────────────── */
+.repo-link {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+  display: inline-block;
+  padding: 8px 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font: 600 var(--text-label)/1 var(--font-body);
+  text-decoration: none;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+
+.repo-link:hover,
+.repo-link:focus-visible {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  outline: none;
+}
+
+.repo-link:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+@media (min-width: 768px) {
+  .repo-link {
+    top: 24px;
+    right: 32px;
+  }
+}
+
 /* ─── Utility ───────────────────────────────────────────────────────────── */
 [hidden] { display: none !important; }
 .is-hidden { display: none !important; }
