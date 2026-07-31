@@ -27,13 +27,13 @@ Anyone can curl the GitHub Pages endpoint and get a Quran verse (Arabic + Basmei
 - ✓ Full search index (`api/search.json`) all 6,236 ayahs for keyword filtering — Validated in Phase 2
 - ✓ validate mode: 114/114 files, 6236 verses, 0 errors — Validated in Phase 2
 - ✓ Stdlib-only, read-only DB, gitignored api/ — Validated in Phase 2
+- ✓ GitHub Pages static site with a curl-able JSON API — Validated in Phase 3: GitHub Pages Deployment
+- ✓ GitHub Actions workflow builds and deploys JSON to Pages — Validated in Phase 3
+- ✓ Searchable via `curl | jq` filtering (API-05) — Validated in Phase 3
 
 ### Active
 
-- [ ] Build a GitHub Pages static site with a curl-able JSON API
-- [ ] GitHub Actions workflow builds and deploys JSON to Pages
 - [ ] Browser search UI styled with QuestUI design system
-- [ ] Searchable via `curl | jq` filtering
 
 ### Out of Scope
 
@@ -85,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-31 after Phase 2 completion*
+*Last updated: 2026-07-31 after Phase 3 completion*

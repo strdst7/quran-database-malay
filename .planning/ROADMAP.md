@@ -8,7 +8,7 @@ Starting from an existing Quran SQLite database with 134 editions, this project 
 
 - [x] **Phase 1: Malay Translation Data** - Fetch Basmeih translation and add it to the SQLite database (completed 2026-07-31)
 - [x] **Phase 2: JSON API Generation** - Export per-surah JSON files and a full search index from SQLite (completed 2026-07-31)
-- [ ] **Phase 3: GitHub Pages Deployment** - GitHub Actions workflow builds and deploys JSON to Pages with usage docs
+- [x] **Phase 3: GitHub Pages Deployment** - GitHub Actions workflow builds and deploys JSON to Pages with usage docs (completed 2026-07-31)
 - [ ] **Phase 4: Search UI** - Browser search page styled with QuestUI design system
 
 ## Phase Details
@@ -63,9 +63,9 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 03-01-PLAN.md — Create GitHub Actions Pages deployment workflow (two-job build→deploy, official actions)
+- [x] 03-01-PLAN.md — Create GitHub Actions Pages deployment workflow (two-job build→deploy, official actions)
 **Wave 2 *(blocked on Wave 1 completion)* **
-- [ ] 03-02-PLAN.md — Write API usage docs (curl + jq examples) and verify deployed URLs
+- [x] 03-02-PLAN.md — Write API usage docs (curl + jq examples) and verify deployed URLs
 
 **Cross-cutting constraints:**
 - Official GitHub Pages actions only (configure-pages / upload-pages-artifact / deploy-pages), two-job shape, least-privilege permissions `contents: read, pages: write, id-token: write` (D-01/D-03/D-04) — shared across both plans
