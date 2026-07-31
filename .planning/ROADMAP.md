@@ -6,7 +6,7 @@ Starting from an existing Quran SQLite database with 134 editions, this project 
 
 ## Phases
 
-- [ ] **Phase 1: Malay Translation Data** - Fetch Basmeih translation and add it to the SQLite database
+- [x] **Phase 1: Malay Translation Data** - Fetch Basmeih translation and add it to the SQLite database (completed 2026-07-31)
 - [ ] **Phase 2: JSON API Generation** - Export per-surah JSON files and a full search index from SQLite
 - [ ] **Phase 3: GitHub Pages Deployment** - GitHub Actions workflow builds and deploys JSON to Pages with usage docs
 - [ ] **Phase 4: Search UI** - Browser search page styled with QuestUI design system
@@ -80,7 +80,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Malay Translation Data | 0/2 | Not started | - |
+| 1. Malay Translation Data | 2/2 | Complete | 2026-07-31 |
 | 2. JSON API Generation | 0/2 | Not started | - |
 | 3. GitHub Pages Deployment | 0/2 | Not started | - |
 | 4. Search UI | 0/2 | Not started | - |
