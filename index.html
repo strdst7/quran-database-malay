@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Al-Quran — Carian Arab &amp; Melayu Basmeih</title>
+  <meta name="description" content="Cari ayat Al-Quran mengikut teks Arab dan terjemahan Melayu Basmeih. Indeks penuh 6,236 ayat dicari terus dalam pelayar.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Langkau ke kandungan utama</a>
+  <div class="container">
+    <header class="hero" id="hero">
+      <h1 class="hero-title">Al-Quran</h1>
+      <p class="hero-subtitle">Cari ayat mengikut teks Arab atau terjemahan Melayu Basmeih. Indeks penuh 6,236 ayat dimuat terus ke pelayar anda.</p>
+    </header>
+    <div class="search">
+      <input type="search" id="search-input" aria-label="Carian ayat Al-Quran" placeholder="Cari ayat Al-Quran… (contoh: rahmat, بسم)" autocomplete="off" spellcheck="false" inputmode="text" disabled>
+    </div>
+    <div id="status" role="status" aria-live="polite">Memuatkan indeks…</div>
+    <main id="main">
+      <section class="featured" id="featured">
+        <h2 class="featured-title">Ayat Pilihan</h2>
+        <div class="featured-grid" id="featured-grid"></div>
+      </section>
+      <section class="loading-card" id="loading" role="status">
+        <div class="spinner" aria-hidden="true"></div>
+        <p class="loading-title">Memuatkan indeks…</p>
+        <p class="loading-subtitle">Memuatkan 6,236 ayat. Sila tunggu sebentar.</p>
+      </section>
+      <section class="error-card" id="error" role="alert" hidden>
+        <h2 class="error-title">Gagal memuatkan indeks</h2>
+        <p class="error-body">Indeks carian tidak dapat dimuat turun. Anda boleh cuba semula, atau gunakan API curl/jq terus:</p>
+        <pre class="error-curl"><code>curl https://C-Fu.github.io/quran-database-malay/api/search.json | \
+  jq '.[] | select(.malay | contains("rahmat"))'</code></pre>
+        <button class="retry-button" type="button">Cuba semula</button>
+      </section>
+      <section class="no-results-card" id="no-results" role="status" hidden>
+        <h2 class="no-results-title">Tiada padanan ditemui</h2>
+        <p class="no-results-body"></p>
+        <p class="no-results-suggestions-label">Mungkin maksud anda:</p>
+        <div class="featured-grid" id="suggestions-grid"></div>
+      </section>
+      <div class="results-meta" id="results-meta" hidden></div>
+      <div class="results-grid" id="results"></div>
+      <button class="show-more" id="show-more" type="button" hidden></button>
+    </main>
+  </div>
+  <footer class="footer">Data daripada Pangkalan Data Quran Melayu · Terjemahan Basmeih · Pelayan: GitHub Pages</footer>
+</body>
+</html>
