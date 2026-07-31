@@ -1,255 +1,351 @@
-# Quran Database
+# Al-Quran — Pangkalan Data Melayu (Quran Database Malay)
 
-A comprehensive MySQL and SQLite database containing the complete Quran text with multiple translations and editions.
+> Cari ayat Al-Quran mengikut teks Arab dan **terjemahan Melayu Basmeih** — terus dalam pelayar, atau melalui `curl`. Indeks penuh 6,236 ayat dimuat terus ke pelayar anda.
 
-## Contents
+> 🇬🇧 English: A Malay-focused fork of the Quran database — search the full Quran by Arabic text or the **Basmeih Malay translation**, in the browser or from the command line. The entire 6,236-verse index loads straight into your browser.
 
-| File | Format | Size | Description |
-| ---- | ------ | ---- | ----------- |
-| `quran.sql.zip` | MySQL dump | ~187 MB uncompressed | Full database dump for MySQL |
-| `quran.db.gz` | SQLite database | ~208 MB uncompressed | Full database for SQLite |
-| `convert_to_sqlite.py` | Python script | — | Converts `quran.sql` to `quran.db` |
+> 🍴 **Fork** of [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) — refocused on the Basmeih (`ms.basmeih`) Malay translation, with a static JSON API on GitHub Pages and a QuestUI-styled browser search page.
 
-## Database Schema
+---
 
-The actual schema (dynamically extracted from the MySQL dump):
+![Python](https://img.shields.io/badge/Python-3.6+-3776AB?logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?logo=javascript&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-test%20runner-339933?logo=nodedotjs&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI-2088FF?logo=githubactions&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-static-121013?logo=github&logoColor=white)
+![jq](https://img.shields.io/badge/jq-filtering-C8A948?logo=jq&logoColor=black)
+![No Build Step](https://img.shields.io/badge/build-none-CA8A04?style=flat)
+![License](https://img.shields.io/badge/license-open%20source-581C87)
 
-### `surahs`
+---
 
-Stores metadata for all 114 surahs.
+## Quickstart
 
-| Column | Description |
+### In your browser
+Open **<https://C-Fu.github.io/quran-database-malay/>** and type a word — results appear as you type (Malay *and* Arabic, combined).
+
+### From the command line (no auth, no install)
+
+```bash
+# Fetch a whole surah (Arabic + Basmeih Malay) — Al-Baqarah, 286 verses
+curl https://C-Fu.github.io/quran-database-malay/api/surah/2.json
+
+# Keyword-search the Malay translation locally with jq
+curl https://C-Fu.github.io/quran-database-malay/api/search.json \
+  | jq '.[] | select(.malay | contains("rahmat"))'
+
+# List all 114 surahs
+curl https://C-Fu.github.io/quran-database-malay/api/surahs.json
+```
+
+Every verse object has exactly **5 fields**:
+```json
+{"arabic":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ","malay":"Dengan nama Allah, Yang Maha Pemurah, lagi Maha Mengasihani.","surah":1,"ayah":1,"id":1}
+```
+
+---
+
+## What this is
+
+This project takes the complete Quran (Arabic text + 134 translation editions) and **puts the Basmeih Malay translation front and centre**, exposed three ways:
+
+1. **A curl-able static JSON API** on GitHub Pages — per-surah files, a full search index, and surah metadata.
+2. **A browser search page** styled with the [QuestUI](https://designmd.ai/chef/questui) design system — instant as-you-type search over Arabic + Malay.
+3. **A query-ready SQLite database** (`quran.db`) with foreign keys, CHECK constraints, indexes, and juz/hizb lookup tables.
+
+**Core value:** *Anyone can `curl` the endpoint and get a Quran verse (Arabic + Basmeih Malay) by searching — fast, reliably, and without auth.*
+
+The Basmeih translation (`ms.basmeih`, *Tafsir Pimpinan Ar-Rahman*) covers all **6,236 ayahs** and is fetched from the public [alquran.cloud](https://alquran.cloud) API.
+
+---
+
+## How it all works
+
+The whole thing is a **build-time pipeline + static hosting** story. There is no server processing requests — GitHub Pages serves pre-built JSON, and the browser does all the searching client-side.
+
+```mermaid
+flowchart LR
+  classDef src      fill:#1A0F0A,stroke:#CA8A04,color:#F5E6D3
+  classDef py       fill:#306998,stroke:#FFD43B,color:#FFFFFF
+  classDef db       fill:#003B57,stroke:#00A4D6,color:#FFFFFF
+  classDef gh       fill:#24292F,stroke:#581C87,color:#FFFFFF
+  classDef out      fill:#3D2618,stroke:#CA8A04,color:#F5E6D3
+  classDef user     fill:#991B1B,stroke:#CA8A04,color:#F5E6D3
+
+  Z(["data/quran.sql.zip<br/>MySQL dump"]):::src
+  C["convert_to_sqlite.py<br/><i>MySQL → SQLite</i>"]:::py
+  M["add_malay_translation.py<br/><i>+ Basmeih (ms.basmeih)"]:::py
+  DB[("quran.db<br/>SQLite — 6 tables")]:::db
+  G["generate_json_api.py<br/><i>--generate / --validate"]:::py
+  API[["api/<br/>114 surahs + search.json<br/>+ surahs.json"]]:::out
+  UI["index.html · style.css · app.js<br/><i>QuestUI search page"]]:::out
+  CI["GitHub Actions<br/>deploys on push → main"]:::gh
+  P(["GitHub Pages<br/>static CDN"]):::gh
+  U(("👤 User<br/>browser / curl")):::user
+
+  Z --> C --> DB
+  DB --> M --> DB
+  DB --> G --> API
+  API --> CI
+  UI --> CI
+  CI --> P
+  P -.curl.-> U
+  P -.browser.-> U
+```
+
+### Build pipeline (runs in GitHub Actions on every push to `main`)
+
+1. **`gunzip quran.db.gz`** — unpack the pre-built SQLite database.
+2. **`generate_json_api.py --generate`** — read `quran.db` (read-only), emit `api/` (114 per-surah files, `search.json` with 6,236 verses, `surahs.json` with 114 entries).
+3. **`generate_json_api.py --validate`** — assert 114/114 surah files, 6,236 total verses, 0 errors. Non-zero exit fails the build.
+4. **Stage `_site/`** — copy `api/` + the 3 UI files (`index.html`, `style.css`, `app.js`) into a staging dir.
+5. **`upload-pages-artifact` → `deploy-pages`** — publish to GitHub Pages.
+
+Only `api/` and the 3 UI files ever reach the CDN. The 60 MB `quran.db.gz`, the test file, and all scripts stay off the public site.
+
+---
+
+## The three Python scripts
+
+All scripts use **Python 3 stdlib only** — zero dependencies.
+
+| Script | What it does |
 | --- | --- |
-| `id` | Surah number |
-| `number` | Surah number |
-| `name_ar` | Surah name in Arabic (e.g. الفاتحة) |
-| `name_en` | Surah name transliterated (e.g. Al-Fatiha) |
-| `name_en_translation` | English meaning (e.g. The Opening) |
-| `type` | Revelation type (Meccan / Medinan) |
+| [`convert_to_sqlite.py`](convert_to_sqlite.py) | Streams the MySQL dump (`quran.sql`) into an improved SQLite schema: adds FK/CHECK constraints, 9 indexes, pre-populated `juzs`/`hizbs` lookup tables, and 2 views. Memory-bounded line-based parser. |
+| [`add_malay_translation.py`](add_malay_translation.py) | Fetches the Basmeih translation (`ms.basmeih`) from alquran.cloud and inserts an `editions` row + 6,236 `ayah_edition` rows into `quran.db`. |
+| [`generate_json_api.py`](generate_json_api.py) | Reads `quran.db` (read-only) and writes the static JSON API. Modes: `--generate` (write `api/`) and `--validate` (verify structure & counts; exit code used by CI). |
 
-### `ayahs`
+### Regenerate everything locally
 
-Contains the original Arabic text of every ayah (6,236 verses).
+```bash
+# 1. Rebuild the SQLite database from the MySQL dump
+unzip data/quran.sql.zip
+python3 convert_to_sqlite.py
 
-| Column | Description |
-| --- | --- |
-| `id` | Unique ayah ID (1–6236) |
-| `number` | Global ayah number |
-| `text` | Ayah text in Arabic |
-| `number_in_surah` | Ayah number within its surah |
-| `page` | Mushaf page number |
-| `surah_id` | Reference to surah |
-| `hizb_id` | Reference to hizb (1–60) |
-| `juz_id` | Reference to juz (1–30) |
-| `sajda` | Prostration marker (0/1) — 15 ayahs |
+# 2. Add the Basmeih Malay translation
+python3 add_malay_translation.py
 
-### `editions`
+# 3. Generate the JSON API and validate it
+python3 generate_json_api.py --generate
+python3 generate_json_api.py --validate   # → 114/114 files, 6236 verses, 0 errors
 
-Available translations and editions (134 entries).
+# 4. (optional) Run the UI test suite
+node --test app.test.mjs
+```
 
-| Column | Description |
-| --- | --- |
-| `id` | Unique ID |
-| `identifier` | Unique identifier (e.g. `en.sahih`) |
-| `language` | Language code |
-| `name` | Edition name in native language |
-| `english_name` | Edition name in English |
-| `format` | Format (`text`) |
-| `type` | Type (`translation`, `tafsir`) |
+---
 
-### `ayah_edition`
+## Database schema
 
-Ayah-by-ayah translations (835,624 rows — 6,236 ayahs × 134 editions).
+Six tables, 114 surahs, 6,236 ayahs, 134 editions (incl. `ms.basmeih`), 835,624 translation rows (6,236 × 134), 30 juz, 60 hizb.
 
-| Column | Description |
-| --- | --- |
-| `id` | Unique ID |
-| `ayah_id` | Reference to ayah |
-| `edition_id` | Reference to edition |
-| `data` | Translated/annotated text |
-| `is_audio` | Audio flag |
+```mermaid
+erDiagram
+  SURAHS ||--o{ AYAHS : "1 : 6236"
+  JUZS   ||--o{ AYAHS : "spans"
+  HIZBS  ||--o{ AYAHS : "spans"
+  HIZBS  }o--|| JUZS  : "belongs to"
+  EDITIONS ||--o{ AYAH_EDITION : "has"
+  AYAHS    ||--o{ AYAH_EDITION : "has"
 
-### `juzs` (SQLite only — new)
+  SURAHS {
+    int id PK
+    int number
+    text name_ar
+    text name_en
+    text name_en_translation
+    text type "Meccan|Medinan"
+  }
+  AYAHS {
+    int id PK "1–6236"
+    text arabic
+    int surah_id FK
+    int juz_id FK
+    int hizb_id FK
+    int number_in_surah
+    int page
+    int sajda "0|1"
+  }
+  EDITIONS {
+    int id PK
+    text identifier "e.g. ms.basmeih"
+    text language
+    text name
+    text type "translation|tafsir"
+  }
+  AYAH_EDITION {
+    int id PK
+    int ayah_id FK
+    int edition_id FK
+    text data
+    int is_audio
+  }
+  JUZS {
+    int id PK "1–30"
+    int juz_number
+    text name_ar
+    int start_ayah_id
+    int end_ayah_id
+  }
+  HIZBS {
+    int id PK "1–60"
+    int hizb_number
+    int juz_id FK
+    int start_ayah_id
+    int end_ayah_id
+  }
+```
 
-30 juz (parts) with ayah ranges.
+<details>
+<summary><b>SQLite bonus features</b> (click to expand)</summary>
 
-| Column | Description |
-| --- | --- |
-| `id` | Juz ID (1–30) |
-| `juz_number` | Juz number |
-| `name_ar` | Arabic name (e.g. الجزء الأول) |
-| `start_ayah_id` | First ayah in this juz |
-| `end_ayah_id` | Last ayah in this juz |
+- **Foreign-key + CHECK constraints** (the MySQL dump had none)
+- **Indexes** on `surah_id`, `juz_id`, `hizb_id`, `page`, `number_in_surah`, `sajda`
+- **Pre-populated `juzs` (30) and `hizbs` (60)** lookup tables with ayah ranges
+- **Views:** `surah_stats` (ayah counts per surah), `ayah_with_translation` (joined ayah + translation)
+- PRAGMAs: `journal_mode=WAL`, `foreign_keys=ON`, `encoding='UTF-8'`
 
-### `hizbs` (SQLite only — new)
+```python
+import sqlite3
+db = sqlite3.connect("quran.db")
+# Arabic + Basmeih Malay for Al-Fatiha
+rows = db.execute("""
+  SELECT a.text, ae.data
+  FROM ayahs a
+  JOIN ayah_edition ae ON ae.ayah_id = a.id
+  JOIN editions e ON e.id = ae.edition_id
+  WHERE a.surah_id = 1 AND e.identifier = 'ms.basmeih'
+""").fetchall()
+```
+</details>
 
-60 hizbs (half-parts) with ayah ranges and juz references.
+---
 
-| Column | Description |
-| --- | --- |
-| `id` | Hizb ID (1–60) |
-| `hizb_number` | Hizb number |
-| `juz_id` | Parent juz |
-| `name_ar` | Arabic name |
-| `start_ayah_id` | First ayah in this hizb |
-| `end_ayah_id` | Last ayah in this hizb |
+## The search algorithms
 
-## Setup
+This is the interesting part. The browser page (`app.js`, **vanilla JS, no framework, no build step**) makes search instant by folding the entire 6,236-verse index **once at load** and then matching against the folded mirror.
 
-### MySQL
+```mermaid
+flowchart TB
+  classDef load   fill:#2C1A10,stroke:#CA8A04,color:#F5E6D3
+  classDef fold   fill:#581C87,stroke:#CA8A04,color:#F5E6D3
+  classDef match  fill:#991B1B,stroke:#CA8A04,color:#F5E6D3
+  classDef render fill:#3D2618,stroke:#CA8A04,color:#F5E6D3
 
-1. Extract the SQL file:
-   ```bash
-   unzip quran.sql.zip
-   ```
+  L(["loadIndex()<br/>fetch api/search.json"]):::load
+  M["Build mirror ONCE (~240ms)<br/>folded Arabic + folded Malay per verse"]:::fold
+  Q(["User types<br/>(250ms debounce)"]):::load
+  F["Fold the query<br/>foldAr() + foldMs()"]:::fold
+  S["search(terms)<br/>AND across terms · id order<br/>substring-within-words"]:::match
+  R["renderCard()<br/>single-pass highlight<br/>createElement + textContent<br/>(ZERO innerHTML)"]:::render
+  OUT(["Verse cards<br/>Arabic RTL top · Malay LTR bottom"]):::render
 
-2. Import into MySQL:
-   ```bash
-   mysql -u <username> -p <database_name> < quran.sql
-   ```
+  L --> M
+  Q --> F --> S
+  M -. searched against .-> S
+  S --> R --> OUT
+```
 
-### SQLite
+### 1. Arabic folding — `foldAr()` (app.js)
+Matches ignore Quranic diacritics and letter variants, so typing **الله** finds بِسْمِ ٱللَّهِ.
 
-1. Extract the database:
-   ```bash
-   gunzip quran.db.gz
-   ```
+- Strip **tatweel + tashkeel + Quranic signs**: `[\u0640\u064B-\u0654\u0670\u06D6-\u06ED]` (kashida, harakat, hamza, wasla, etc.)
+- Normalize **alef variants** → ا: `آ أ إ ٱ → ا`
+- Normalize **taa marbutah** → ه: `ة → ه`
+- Normalize **alef maksura** → ي: `ى → ي`
 
-2. Open with any SQLite client:
-   ```bash
-   sqlite3 quran.db
-   ```
+Based on the canonical Lucene `ArabicNormalizer` approach.
 
-   Or use in Python:
-   ```python
-   import sqlite3
-   db = sqlite3.connect("quran.db")
-   # Get Surah Al-Fatiha
-   rows = db.execute("SELECT * FROM ayahs WHERE surah_id = 1").fetchall()
-   # Get ayah with translation
-   rows = db.execute("SELECT arabic, translation FROM ayah_with_translation WHERE surah_id = 1 AND language = 'en'").fetchall()
-   ```
+### 2. Malay/Latin folding — `foldMs()` (app.js)
+Matches ignore accent marks and case, so typing **BERIMAN** finds “beriman”.
 
-3. To regenerate from the MySQL dump:
-   ```bash
-   unzip quran.sql.zip
-   python3 convert_to_sqlite.py
-   ```
+```js
+s.normalize('NFD').replace(/[\u0300-\u036F]/g, '').toLowerCase()
+```
+Unicode **NFD** decomposition → strip combining diacritical marks (`U+0300–036F`) → lowercase.
 
-The SQLite version adds:
-- Proper **foreign key constraints** and **CHECK constraints**
-- **Indexes** on commonly queried columns (surah_id, juz_id, hizb_id, page, number_in_surah, sajda)
-- Pre-populated **`juzs`** and **`hizbs`** lookup tables with ayah ranges
-- Views: `surah_stats` (ayat counts per surah), `ayah_with_translation` (joined ayah + translation)
+### 3. Fold-once mirror — `search(terms)`
+Instead of folding every verse on every keystroke, the whole index is folded **once at page load** into a mirror array of `{ar, ms}` folded strings. Each search then scans the mirror — that's why search is instant (~2.6 ms/keystroke on the full 6,236 verses).
 
-## API
+- **AND across terms**: multi-word queries require *every* term to match (`pemurah langit` → 3 verses).
+- **Combined Malay + Arabic**: one search box searches both fields together — no toggle.
+- **id order**: results come back in global ayah-id order (1–6236), the natural Quranic order.
 
-This repository publishes a static JSON API on GitHub Pages. The `api/` directory is gitignored and built by GitHub Actions on every push to `main`, then deployed to GitHub Pages.
+### 4. Fold-aware regex highlighting — `arRegex()` + `appendHighlighted()`
+The **original** (fully-diacritised) verse text is displayed, with matches wrapped in `<mark>`. The highlight regex is built by folding the *query*, then expanding each base character into a character class (alef variants, ة/ه, ى/ي) joined by a diacritic-allowance class — so the highlight lands on the right glyphs even though the displayed text still carries its tashkeel.
+
+### 5. Fuzzy “did you mean?” — `levAtMost()` (banded Levenshtein)
+When a search returns nothing, a **banded Levenshtein** distance (early-exit, threshold ≤1 for short words / ≤2 for longer) runs over a lazily-built word index bucketed by first character + length. It suggests up to 5 “Mungkin maksud anda:” alternatives — e.g. a typo finds the real word.
+
+### 6. XSS-safe rendering — zero `innerHTML`
+**Every** DOM node is built with `createElement` + `textContent` + `setAttribute` — `grep -c innerHTML app.js` returns **0**. A crafted query like `<img src=x onerror=…>` can never execute, because it is never parsed as HTML. This is enforced by the test suite (`app.test.mjs`, `node --test`).
+
+---
+
+## Search UI (QuestUI)
+
+A fantasy/RPG-styled page tuned for reading the Quran — warm dark background, gold Cinzel headings, Spectral body, Arabic set right-to-left above the Malay.
+
+| | |
+|---|---|
+| **Palette** | background `#1A0F0A` · gold `#CA8A04` · deep red `#991B1B` (borders) · royal purple `#581C87` (decorative) · parchment `#F5E6D3` (text) |
+| **Type** | Cinzel 600 (headings) · Spectral (body & Arabic) — from Google Fonts |
+| **Layout** | mobile-first; single-column < 768 px, two-column results grid ≥ 768 px |
+| **Behaviour** | 250 ms debounce · cap 100 results + “Tunjukkan lagi” show-more · loading/error/retry states · featured verses (Al-Fatiha, Ayatul Kursi, Al-Ikhlas) |
+
+> `<html lang="ms">` — the entire UI copy is Bahasa Melayu. Each result card: **Arabic on top (RTL, `lang=ar`)** and **Malay below (LTR, `lang=ms`)**.
+
+---
+
+## API reference
 
 Base URL: `https://C-Fu.github.io/quran-database-malay`
 
 | Endpoint | Description |
 | --- | --- |
-| `/api/surah/{n}.json` | All ayahs of surah `n` (1–114), each with Arabic + Basmeih Malay translation |
-| `/api/search.json` | Full search index — all 6,236 ayahs with Arabic + Malay |
-| `/api/surahs.json` | Metadata for all 114 surahs |
+| `GET /api/surah/{n}.json` | All ayahs of surah `n` (1–114), each `{arabic, malay, surah, ayah, id}` |
+| `GET /api/search.json` | Full search index — all 6,236 verses (flat array, global id order 1–6236) |
+| `GET /api/surahs.json` | Metadata for all 114 surahs |
 
-Every verse object has exactly 5 fields: `arabic`, `malay`, `surah`, `ayah`, `id` (global ayah id 1–6236).
+The `api/` directory is **gitignored** and built by GitHub Actions on every push to `main`, then deployed to GitHub Pages — so the JSON always reflects the latest committed data.
 
-### Fetch a surah
+---
 
-```bash
-curl https://C-Fu.github.io/quran-database-malay/api/surah/2.json
+## Project structure
+
+```
+quran-database-malay/
+├─ convert_to_sqlite.py        # MySQL dump → improved SQLite schema
+├─ add_malay_translation.py    # + Basmeih (ms.basmeih) from alquran.cloud
+├─ generate_json_api.py        # quran.db → static JSON API (--generate/--validate)
+├─ index.html  style.css  app.js   # QuestUI browser search page (vanilla JS)
+├─ app.test.mjs                # node:test suite (reads real api/search.json)
+├─ data/quran.sql.zip          # source MySQL dump (~187 MB uncompressed)
+├─ quran.db.gz                 # deliverable SQLite DB (~208 MB uncompressed)
+├─ .github/workflows/deploy-pages.yml   # build + deploy pipeline
+└─ api/                        # generated JSON (gitignored, built by CI)
 ```
 
-### Search the Malay translation for a keyword
-
-```bash
-curl https://C-Fu.github.io/quran-database-malay/api/search.json | jq '.[] | select(.malay | contains("<keyword>"))'
-```
-
-### List all surahs
-
-```bash
-curl https://C-Fu.github.io/quran-database-malay/api/surahs.json
-```
-
-## Roadmap
-
-We welcome contributions! Here's the planned roadmap for this project. Pick any item and submit a PR.
-
-### Database Improvements
-- [x] Add proper indexes for faster queries
-- [x] Add `juz` (parts) table with ayah ranges
-- [x] Add `hizb` and `rub` (quarter) divisions
-- [ ] Add `pages` table (Mushaf page mapping)
-- [ ] Add word-by-word breakdown table (Arabic root, morphology)
-- [x] Add sajdah (prostration) markers
-- [x] Support ~~PostgreSQL and~~ SQLite exports
-- [x] Add foreign key constraints and proper normalization
-
-### Data Expansion
-- [ ] Add more translations (Urdu, French, Turkish, Indonesian, etc.)
-- [ ] Add Tafsir (exegesis) data — Ibn Kathir, Al-Tabari, Al-Sa'di, etc.
-- [ ] Add audio recitation references (Mishary, Al-Husary, Abdul Basit, etc.)
-- [ ] Add transliteration for each ayah
-- [ ] Add asbab al-nuzul (reasons of revelation)
-- [ ] Add hadith references related to each ayah
-- [ ] Add dua (supplication) extractions from the Quran
-
-### API / Backend
-- [ ] Build a RESTful API (Node.js or Python)
-- [ ] GraphQL endpoint for flexible queries
-- [ ] Search endpoint with full-text Arabic search
-- [ ] Pagination and filtering support
-- [ ] API rate limiting and authentication
-- [ ] Docker setup for easy deployment
-- [ ] API documentation (Swagger / OpenAPI)
-
-### Frontend / App
-- [ ] Web app for browsing surahs and ayahs
-- [ ] Ayah-by-ayah reader with translation toggle
-- [ ] Audio player integration with reciter selection
-- [ ] Search functionality (by surah, ayah, keyword)
-- [ ] Bookmarking and progress tracking
-- [ ] Dark mode and responsive design
-- [ ] Mobile-friendly PWA support
+---
 
 ## Contributing
 
-Contributions are welcome and encouraged! Here's how you can help:
+Contributions are welcome! Especially: more Malay-translation cross-checks, accessibility improvements, and performance tuning of the fold/search loop.
 
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/your-feature`
-3. **Commit** your changes: `git commit -m "Add your feature"`
-4. **Push** to the branch: `git push origin feature/your-feature`
-5. **Open** a Pull Request
+1. **Fork** → feature branch (`git checkout -b feature/your-feature`)
+2. **Regenerate** locally with the scripts above to prove your change
+3. **Run** `node --test app.test.mjs` and `python3 generate_json_api.py --validate`
+4. **Open** a Pull Request
 
-### Contribution Guidelines
-- Follow the existing database schema conventions
-- Include sample queries or screenshots for database changes
-- Add tests for API endpoints
-- Keep translations accurate — reference established scholarly sources
-- For new data, include the source/reference
+Please keep translations accurate (reference established scholarly sources) and follow the existing schema conventions.
 
-If you're unsure where to start, look for items marked in the roadmap above or open an issue to discuss your idea.
+---
 
-## Screenshots
+## Credits & license
 
-![Surahs Table](screenshots/Screen%20Shot%202022-04-19%20at%207.56.15%20AM.png)
-![Ayahs Table](screenshots/Screen%20Shot%202022-04-19%20at%207.55.54%20AM.png)
-![Editions Table](screenshots/Screen%20Shot%202022-04-19%20at%207.56.08%20AM.png)
-![Addons Table](screenshots/Screen%20Shot%202022-04-19%20at%207.55.32%20AM.png)
-
-## Related Projects
-
-- [Quran Lumen API](https://github.com/AbdullahGhanem/quran-lumen-api) — Laravel Lumen API
-- [Quran Vue](https://github.com/adibemohamed/quranaho)
-
-## Sponsor
-
-[Become a Sponsor](https://github.com/sponsors/AbdullahGhanem)
-
-## License
+- **Upstream:** [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) — the original MySQL/SQLite Quran database this project forks.
+- **Translation:** *Tafsir Pimpinan Ar-Rahman* (Basmeih), sourced via the public [alquran.cloud](https://alquran.cloud) API as edition `ms.basmeih`.
+- **Design:** [QuestUI](https://designmd.ai/chef/questui) design system.
 
 This project is open source. The Quran text is in the public domain.
