@@ -62,8 +62,15 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Create GitHub Actions Pages deployment workflow
-- [ ] 03-02: Write API usage docs (curl + jq examples) and verify deployed URLs
+**Wave 1**
+- [ ] 03-01-PLAN.md — Create GitHub Actions Pages deployment workflow (two-job build→deploy, official actions)
+**Wave 2 *(blocked on Wave 1 completion)* **
+- [ ] 03-02-PLAN.md — Write API usage docs (curl + jq examples) and verify deployed URLs
+
+**Cross-cutting constraints:**
+- Official GitHub Pages actions only (configure-pages / upload-pages-artifact / deploy-pages), two-job shape, least-privilege permissions `contents: read, pages: write, id-token: write` (D-01/D-03/D-04) — shared across both plans
+- Only the `api/` directory is published via `_site/` staging; no index.html in Phase 3 (D-05/D-06/D-07) — 03-01 stages, 03-02 verifies the live URLs
+- Live base URL `https://C-Fu.github.io/quran-database-malay/api/...` — 03-01 produces the deployment, 03-02 documents and curls it (D-12, API-05)
 
 ### Phase 4: Search UI
 **Goal**: A browser search page deployed on GitHub Pages, styled with the QuestUI design system, letting visitors search Malay/Arabic text and view Arabic + Malay verses
