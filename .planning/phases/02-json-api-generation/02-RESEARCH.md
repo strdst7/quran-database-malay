@@ -417,21 +417,24 @@ jq -c '.[0]' api/surah/1.json
 | A3 | A 3.1 MB `search.json` parsed client-side in the browser is acceptable for Phase 4 search (fetch + filter) | Summary | If UI performance were a concern, search would need chunking — Phase 4's problem, not this phase's; 3.1 MB JSON.parse is well within normal browser budgets [ASSUMED] |
 | A4 | The `editions` id gap (id 91 absent, 134 rows over ids 1–135) is a pre-existing data quirk, not a Phase 2 defect | Common Pitfall 5 note | No impact — the generator looks up `ms.basmeih` by `identifier`, never by id; verified Phase 1 left counts unchanged [VERIFIED: live DB] |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Compact separators vs default separators?**
    - What we know: D-03 says "minified/compact (default `json.dump`)". Default separators produce `{"a": 1, "b": 2}`; truly-minified needs `separators=(',', ':')` → `{"a":1,"b":2}`. Measured difference on search.json: 1.9% (60.9 KB of 3,137.8 KB) [VERIFIED].
    - What's unclear: whether the user's "minified" intent wants the strictly smallest form or just "not pretty-printed".
    - Recommendation: default `json.dump` (matches the locked parenthetical verbatim); note the 1.9% option in the plan as an optional micro-optimization. No discuss round needed — either satisfies the decision.
+   - **RESOLVED:** default `json.dump` adopted verbatim (plan 02-01 task 1 step j, D-03); the 1.9% `separators=(',', ':')` micro-optimization noted but not taken.
 
 2. **Should `--validate` cross-check per-surah counts against the DB?**
    - What we know: D-17 lists file-based checks (existence, shape, 6,236 total, search.json complete); D-21 forbids cross-checking the *staged file*, not the DB. A DB cross-check (surah 2 must have 286 verses) would catch "file written from wrong data" bugs.
    - What's unclear: D-17's "reads the generated api/ files back" phrasing suggests file-only validation.
    - Recommendation: file-only checks are the D-17 baseline and keep `--validate` runnable without the DB (CI-friendly); optionally add an *expected-counts* table baked into the script (per-surah counts are static Quran facts) or a DB-backed check behind a flag. Planner should keep the required checks file-only.
+   - **RESOLVED:** file-only checks per D-17 (plan 02-01 task 1 step 2, `cmd_validate` a–e); the expected-counts table / DB-backed flag option was not adopted — `--validate` stays runnable without the DB.
 
 3. **Should `--validate` also check `api/surahs.json`?**
    - What we know: CONTEXT's OpenCode's Discretion explicitly recommends yes (114 entries, number order, 6 required keys).
    - Recommendation: yes — it is cheap (one `json.load`, three assertions) and closes the loop on D-12/D-13. Already verified feasible in the prototype.
+   - **RESOLVED:** yes — surahs.json 114-entry / number-order / 6-key check is part of `cmd_validate` (plan 02-01 task 1 step 2e).
 
 ## Environment Availability
 

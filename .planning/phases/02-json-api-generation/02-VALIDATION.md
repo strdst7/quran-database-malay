@@ -2,8 +2,8 @@
 phase: 2
 slug: json-api-generation
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-07-31
 ---
 
@@ -49,8 +49,8 @@ created: 2026-07-31
 
 ## Wave 0 Requirements
 
-- [ ] `generate_json_api.py --validate` — the entire test surface for this phase; **must** include: 114-file existence, JSON-shape loop, 6,236 total, search.json id contiguity, surahs.json 114-check
-- [ ] No test framework — deliberate: matches repo convention. Optional pytest unit tests require user confirmation of a dev-only dep — otherwise omit; `--validate` covers the phase
+- [x] `generate_json_api.py --validate` — the entire test surface for this phase; **must** include: 114-file existence, JSON-shape loop, 6,236 total, search.json id contiguity, surahs.json 114-check — covered by plan 02-01 task 1 `cmd_validate` (steps 2a–2e)
+- [x] No test framework — deliberate: matches repo convention. Optional pytest unit tests require user confirmation of a dev-only dep — otherwise omit; `--validate` covers the phase
 
 ---
 
@@ -64,11 +64,11 @@ created: 2026-07-31
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 5s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 5s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved
