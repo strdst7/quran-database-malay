@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "presets": {
+      "custom-v4": {
+        "planning": "deepseek/deepseek-v4-flash",
+        "execution": "deepseek/deepseek-v4-pro",
+        "verification": "deepseek/deepseek-v4-pro"
+      }
+    }
+  },
+  "current_oc_profile": "custom-v4"
+}

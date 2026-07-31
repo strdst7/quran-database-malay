@@ -1,0 +1,38 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "gsd-planner": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-plan-checker": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-phase-researcher": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-roadmapper": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-project-researcher": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-research-synthesizer": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-codebase-mapper": {
+      "model": "deepseek/deepseek-v4-flash"
+    },
+    "gsd-executor": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "gsd-debugger": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "gsd-verifier": {
+      "model": "deepseek/deepseek-v4-pro"
+    },
+    "gsd-integration-checker": {
+      "model": "deepseek/deepseek-v4-pro"
+    }
+  }
+}
