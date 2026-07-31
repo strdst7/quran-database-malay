@@ -52,9 +52,9 @@
 | MALAY-02 | Phase 1 | Pending |
 | MALAY-03 | Phase 1 | Pending |
 | MALAY-04 | Phase 1 | Pending |
-| API-01 | Phase 2 | Pending |
-| API-02 | Phase 2 | Pending |
-| API-03 | Phase 2 | Pending |
+| API-01 | Phase 2 | Complete |
+| API-02 | Phase 2 | Complete |
+| API-03 | Phase 2 | Complete |
 | API-04 | Phase 3 | Pending |
 | API-05 | Phase 3 | Pending |
 | UI-01 | Phase 4 | Pending |
