@@ -41,7 +41,7 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 02-01-PLAN.md — Write JSON generator script (per-surah files + search index)
+- [x] 02-01-PLAN.md — Write JSON generator script (per-surah files + search index)
 **Wave 2 *(blocked on Wave 1 completion)* **
 - [ ] 02-02-PLAN.md — Validate output structure, sizes, and verse count coverage
 
