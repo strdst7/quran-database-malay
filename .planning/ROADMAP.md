@@ -9,7 +9,7 @@ Starting from an existing Quran SQLite database with 134 editions, this project 
 - [x] **Phase 1: Malay Translation Data** - Fetch Basmeih translation and add it to the SQLite database (completed 2026-07-31)
 - [x] **Phase 2: JSON API Generation** - Export per-surah JSON files and a full search index from SQLite (completed 2026-07-31)
 - [x] **Phase 3: GitHub Pages Deployment** - GitHub Actions workflow builds and deploys JSON to Pages with usage docs (completed 2026-07-31)
-- [ ] **Phase 4: Search UI** - Browser search page styled with QuestUI design system
+- [x] **Phase 4: Search UI** - Browser search page styled with QuestUI design system (completed 2026-07-31)
 
 ## Phase Details
 
@@ -85,9 +85,9 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 04-01-PLAN.md — Build QuestUI-styled search page (HTML/CSS/JS) per UI-SPEC contract
+- [x] 04-01-PLAN.md — Build QuestUI-styled search page (HTML/CSS/JS) per UI-SPEC contract
 **Wave 2 *(blocked on Wave 1 completion)* **
-- [ ] 04-02-PLAN.md — Wire page into deploy workflow, test locally and after deploy
+- [x] 04-02-PLAN.md — Wire page into deploy workflow, test locally and after deploy
 
 **Cross-cutting constraints:**
 - The 5-field verse contract `{arabic, malay, surah, ayah, id}` from `api/search.json` (6,236 verses, id order 1–6236) is consumed as-is — no new index file (D-01/D-04) — shared by 04-01 (app.js search/rendering) and 04-02 (local + live verification)
@@ -102,6 +102,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Malay Translation Data | 2/2 | Complete | 2026-07-31 |
-| 2. JSON API Generation | 0/2 | Not started | - |
-| 3. GitHub Pages Deployment | 0/2 | Not started | - |
-| 4. Search UI | 0/2 | Not started | - |
+| 2. JSON API Generation | 2/2 | Complete | 2026-07-31 |
+| 3. GitHub Pages Deployment | 2/2 | Complete | 2026-07-31 |
+| 4. Search UI | 2/2 | Complete | 2026-07-31 |

@@ -30,10 +30,11 @@ Anyone can curl the GitHub Pages endpoint and get a Quran verse (Arabic + Basmei
 - ✓ GitHub Pages static site with a curl-able JSON API — Validated in Phase 3: GitHub Pages Deployment
 - ✓ GitHub Actions workflow builds and deploys JSON to Pages — Validated in Phase 3
 - ✓ Searchable via `curl | jq` filtering (API-05) — Validated in Phase 3
+- ✓ Browser search UI styled with QuestUI design system — Validated in Phase 4: Search UI
 
 ### Active
 
-- [ ] Browser search UI styled with QuestUI design system
+- *(all requirements validated — v1.0 milestone complete)*
 
 ### Out of Scope
 
@@ -85,4 +86,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-31 after Phase 3 completion*
+*Last updated: 2026-07-31 after Phase 4 completion (v1.0 milestone delivered)*
