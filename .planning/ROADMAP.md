@@ -43,7 +43,7 @@ Plans:
 **Wave 1**
 - [x] 02-01-PLAN.md — Write JSON generator script (per-surah files + search index)
 **Wave 2 *(blocked on Wave 1 completion)* **
-- [ ] 02-02-PLAN.md — Validate output structure, sizes, and verse count coverage
+- [x] 02-02-PLAN.md — Validate output structure, sizes, and verse count coverage
 
 **Cross-cutting constraints:**
 - Every verse object has exactly the 5 keys `arabic, malay, surah, ayah, id` with non-empty Arabic and Malay text (D-02) — shared contract across all output files
