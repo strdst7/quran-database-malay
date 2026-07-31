@@ -136,15 +136,20 @@ def cmd_fetch(args):
 
 def cmd_insert(args):
     """Insert staged translation into quran.db. Return exit code."""
+    if not os.path.exists(DB_FILE):
+        print("quran.db not found. Run convert_to_sqlite.py first.")
+        return 1
+
     try:
-        if not os.path.exists(DB_FILE):
-            print("quran.db not found. Run convert_to_sqlite.py first.")
-            return 1
-
         records = load_staged()
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Insert failed: {e}")
+        return 1
 
-        db = sqlite3.connect(DB_FILE)
+    db = sqlite3.connect(DB_FILE)
+    try:
         db.execute("PRAGMA foreign_keys = ON")
+        db.execute("BEGIN")
         now = time.strftime('%Y-%m-%d %H:%M:%S')
 
         existing = db.execute(
@@ -157,7 +162,7 @@ def cmd_insert(args):
                 f"ms.basmeih already exists in editions — skipping "
                 f"(use --force to re-run)"
             )
-            db.close()
+            db.rollback()
             return 0
 
         if existing and args.force:
@@ -191,21 +196,12 @@ def cmd_insert(args):
 
         if len(ayah_map) != EXPECTED_AYAHS:
             print(
-                f"staged numbers do not match ayahs.number "
-                f"(ayahs table has {len(ayah_map)} rows, expected "
-                f"{EXPECTED_AYAHS})"
+                f"ayahs table has {len(ayah_map)} rows, expected "
+                f"{EXPECTED_AYAHS}. The database schema may be "
+                f"corrupted — rebuild with convert_to_sqlite.py first."
             )
-            db.close()
+            db.rollback()
             return 1
-
-        for r in records:
-            if r['number'] not in ayah_map:
-                print(
-                    f"staged numbers do not match ayahs.number "
-                    f"(number {r['number']} not in ayahs table)"
-                )
-                db.close()
-                return 1
 
         # Build and insert ayah_edition rows
         rows = [
@@ -237,14 +233,13 @@ def cmd_insert(args):
         print(f"  Database size: {db_size:.1f} MB")
         print("Done!")
 
-        db.close()
         return 0
-    except (FileNotFoundError, ValueError, sqlite3.Error) as e:
+    except (sqlite3.Error, ValueError) as e:
+        db.rollback()
         print(f"Insert failed: {e}")
         return 1
-    except Exception as e:
-        print(f"Insert failed: {e}")
-        return 1
+    finally:
+        db.close()
 
 
 # -- CLI entry point ---------------------------------------------------------
