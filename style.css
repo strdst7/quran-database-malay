@@ -1,0 +1,429 @@
+/* ==========================================================================
+   QuestUI Design System — Quran Search Page
+   Phase 4: Search UI (04-01)
+   All colors, typography, spacing, breakpoints per UI-SPEC design contract.
+   ========================================================================== */
+
+/* ─── Color tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces (60% dominant + 30% secondary) */
+  --bg:            #1A0F0A;
+  --surface:       #2C1A10;
+  --surface-raised:#3D2618;
+  --border:        #5C3A1F;
+  --border-subtle: #3D2618;
+
+  /* Text */
+  --text-primary:  #F5E6D3;
+  --text-muted:    #B89A7A;
+
+  /* Accents (10%) */
+  --accent-gold:   #CA8A04;
+  --accent-red:    #991B1B;
+  --accent-purple: #581C87;
+
+  /* Highlight (<mark>) */
+  --highlight-bg:  rgba(202, 138, 4, 0.30);
+  --highlight-text: var(--text-primary);
+
+  /* Focus ring */
+  --focus-ring:    0 0 0 3px rgba(202, 138, 4, 0.45);
+
+  /* State overlays */
+  --error-bg:      rgba(153, 27, 27, 0.18);
+
+  /* ─── Typography tokens ────────────────────────────────────────────── */
+  --text-display: clamp(28px, 5vw, 40px);
+  --text-heading: clamp(22px, 3vw, 24px);
+  --text-body: 18px;
+  --text-label: 14px;
+  --text-arabic: clamp(26px, 4vw, 28px);
+
+  /* ─── Font stacks ──────────────────────────────────────────────────── */
+  --font-heading: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
+  --font-body:    'Spectral', Georgia, 'Times New Roman', serif;
+  --font-arabic:  'Spectral', 'Amiri', 'Traditional Arabic', 'Noto Naskh Arabic', serif;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font: 400 var(--text-body)/1.6 var(--font-body);
+  margin: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 32px;
+  }
+}
+
+/* ─── Skip link (accessibility) ─────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  left: 0;
+  top: 0;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  padding: 8px 16px;
+}
+
+/* ─── Utility ───────────────────────────────────────────────────────────── */
+[hidden] { display: none !important; }
+.is-hidden { display: none !important; }
+
+/* ─── Hero ──────────────────────────────────────────────────────────────── */
+.hero {
+  background: transparent;
+  text-align: center;
+  padding: 48px 16px;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: 64px 32px;
+  }
+}
+
+.hero-title {
+  font: 600 var(--text-display)/1.15 var(--font-heading);
+  color: var(--accent-gold);
+  margin: 0 0 16px 0;
+  letter-spacing: 0.02em;
+}
+
+.hero-subtitle {
+  font: 400 var(--text-body)/1.6 var(--font-body);
+  color: var(--text-muted);
+  max-width: 60ch;
+  margin: 0 auto;
+}
+
+/* ─── Search ────────────────────────────────────────────────────────────── */
+.search {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+#search-input {
+  width: 100%;
+  height: 56px;
+  padding: 12px 16px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font: 400 var(--text-body)/1 var(--font-body);
+  box-sizing: border-box;
+}
+
+#search-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+#search-input:focus {
+  border-color: var(--accent-gold);
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+#search-input[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Status region ─────────────────────────────────────────────────────── */
+#status {
+  text-align: center;
+  color: var(--text-muted);
+  font: 400 var(--text-label)/1.4 var(--font-body);
+  padding: 16px 0;
+}
+
+/* ─── Verse Card ────────────────────────────────────────────────────────── */
+.verse-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: border-color 200ms ease;
+}
+
+.verse-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.verse-label {
+  font: 600 var(--text-label)/1.4 var(--font-body);
+  color: var(--accent-gold);
+  margin-bottom: 16px;
+  text-transform: none;
+}
+
+.verse-arabic {
+  font: 400 var(--text-arabic)/1.9 var(--font-arabic);
+  color: var(--text-primary);
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: isolate;
+  margin: 0 0 12px 0;
+}
+
+.verse-malay {
+  font: 400 var(--text-body)/1.6 var(--font-body);
+  color: var(--text-primary);
+  direction: ltr;
+  text-align: left;
+  margin: 0;
+}
+
+mark {
+  background: var(--highlight-bg);
+  color: var(--highlight-text);
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* ─── Results Grid ──────────────────────────────────────────────────────── */
+.results-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+#results {
+  margin-top: 32px;
+}
+
+.results-meta {
+  font: 400 var(--text-label)/1.4 var(--font-body);
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* ─── Featured Section ──────────────────────────────────────────────────── */
+.featured {
+  margin-top: 48px;
+}
+
+.featured-title {
+  font: 600 var(--text-heading)/1.2 var(--font-heading);
+  color: var(--accent-gold);
+  text-align: center;
+  margin: 0 0 32px 0;
+  letter-spacing: 0.02em;
+}
+
+.featured-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+/* ─── Suggestions grid (no-results) — single column even on desktop ─────── */
+#suggestions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ─── Buttons (.show-more + .retry-button) ─────────────────────────────── */
+.show-more,
+.retry-button {
+  display: block;
+  margin: 32px auto 0;
+  min-height: 44px;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--accent-gold);
+  border-radius: 8px;
+  font: 600 var(--text-label)/1 var(--font-body);
+  cursor: pointer;
+}
+
+.show-more:hover,
+.retry-button:hover,
+.show-more:focus-visible,
+.retry-button:focus-visible {
+  background: var(--accent-gold);
+  color: var(--bg);
+}
+
+.show-more:focus-visible,
+.retry-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.show-more[disabled],
+.retry-button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Loading Card ──────────────────────────────────────────────────────── */
+.loading-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  max-width: 480px;
+  margin: 48px auto;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-title {
+  font: 600 var(--text-body)/1.6 var(--font-body);
+  color: var(--text-primary);
+  margin: 16px 0 0 0;
+}
+
+.loading-subtitle {
+  font: 400 var(--text-label)/1.4 var(--font-body);
+  color: var(--text-muted);
+  margin: 8px 0 0 0;
+}
+
+/* ─── No-Results Card ───────────────────────────────────────────────────── */
+.no-results-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.no-results-title {
+  font: 600 var(--text-heading)/1.2 var(--font-heading);
+  color: var(--accent-gold);
+  margin: 0 0 16px 0;
+  letter-spacing: 0.02em;
+}
+
+.no-results-body {
+  font: 400 var(--text-body)/1.6 var(--font-body);
+  color: var(--text-primary);
+  margin: 0 0 32px 0;
+}
+
+.no-results-suggestions-label {
+  font: 600 var(--text-label)/1.4 var(--font-body);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+}
+
+/* ─── Error Card ────────────────────────────────────────────────────────── */
+.error-card {
+  background: var(--surface);
+  border: 1px solid var(--accent-red);
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  max-width: 640px;
+  margin: 48px auto;
+  box-shadow: 0 0 0 1px var(--error-bg) inset;
+}
+
+.error-title {
+  font: 600 var(--text-heading)/1.2 var(--font-heading);
+  color: var(--accent-gold);
+  margin: 0 0 16px 0;
+  letter-spacing: 0.02em;
+}
+
+.error-body {
+  font: 400 var(--text-body)/1.6 var(--font-body);
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+}
+
+.error-curl {
+  background: var(--bg);
+  color: var(--text-primary);
+  padding: 16px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  max-width: 520px;
+  margin: 0 auto 24px;
+}
+
+/* ─── Footer ────────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  color: var(--text-muted);
+  font: 400 var(--text-label)/1 var(--font-body);
+  padding: 48px 16px 32px;
+  border-top: 1px solid var(--accent-purple);
+  margin-top: 64px;
+}
+
+/* ─── Reduced motion (accessibility) ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+  .verse-card,
+  .show-more,
+  .retry-button,
+  #search-input {
+    transition: none;
+  }
+}
