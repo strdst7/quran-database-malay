@@ -31,19 +31,48 @@ Open **<https://C-Fu.github.io/quran-database-malay/>** and type a word — resu
 
 > The live QuestUI search page — dark warm background, gold Cinzel headings, as-you-type search with matches highlighted. Each card shows **Arabic (right-to-left)** on top and the **Basmeih Malay** translation below.
 
-### From the command line (no auth, no install)
+### From the command line
 
+No auth, no install — the JSON is public on GitHub Pages. Pick your platform for each task.
+
+> **Windows note:** PowerShell aliases `curl` to `Invoke-WebRequest` and `jq` isn't installed by default — so use the **PowerShell** (`Invoke-RestMethod`) examples below. If you have real `curl` + `jq` installed (e.g. via WSL, Git Bash, or `winget install jqlang.jq`), the macOS/Linux blocks work too.
+
+#### 1. Fetch a whole surah (Arabic + Basmeih Malay) — Al-Baqarah, 286 verses
+
+macOS / Linux:
 ```bash
-# Fetch a whole surah (Arabic + Basmeih Malay) — Al-Baqarah, 286 verses
 curl https://C-Fu.github.io/quran-database-malay/api/surah/2.json
+```
+Windows (PowerShell):
+```powershell
+Invoke-RestMethod https://C-Fu.github.io/quran-database-malay/api/surah/2.json
+```
 
-# Keyword-search the Malay translation locally with jq
-curl https://C-Fu.github.io/quran-database-malay/api/search.json \
+#### 2. Keyword-search the Malay translation
+
+macOS / Linux (uses [`jq`](https://jqlang.github.io/jq/)):
+```bash
+curl -s https://C-Fu.github.io/quran-database-malay/api/search.json \
   | jq '.[] | select(.malay | contains("rahmat"))'
+```
+Windows (PowerShell — no `jq` needed):
+```powershell
+(Invoke-RestMethod https://C-Fu.github.io/quran-database-malay/api/search.json) |
+  Where-Object malay -match 'rahmat' |
+  Select-Object surah, ayah, malay
+```
 
-# List all 114 surahs
+#### 3. List all 114 surahs
+
+macOS / Linux:
+```bash
 curl https://C-Fu.github.io/quran-database-malay/api/surahs.json
 ```
+Windows (PowerShell):
+```powershell
+Invoke-RestMethod https://C-Fu.github.io/quran-database-malay/api/surahs.json
+```
+
 
 Every verse object has exactly **5 fields**:
 ```json
@@ -81,11 +110,11 @@ flowchart LR
 
   Z(["data/quran.sql.zip<br/>MySQL dump"]):::src
   C["convert_to_sqlite.py<br/><i>MySQL → SQLite</i>"]:::py
-  M["add_malay_translation.py<br/><i>+ Basmeih (ms.basmeih)"]:::py
+  M["add_malay_translation.py<br/><i>+ Basmeih (ms.basmeih)</i>"]:::py
   DB[("quran.db<br/>SQLite — 6 tables")]:::db
-  G["generate_json_api.py<br/><i>--generate / --validate"]:::py
+  G["generate_json_api.py<br/><i>--generate / --validate</i>"]:::py
   API[["api/<br/>114 surahs + search.json<br/>+ surahs.json"]]:::out
-  UI["index.html · style.css · app.js<br/><i>QuestUI search page"]]:::out
+  UI["index.html · style.css · app.js<br/><i>QuestUI search page</i>"]:::out
   CI["GitHub Actions<br/>deploys on push → main"]:::gh
   P(["GitHub Pages<br/>static CDN"]):::gh
   U(("👤 User<br/>browser / curl")):::user
