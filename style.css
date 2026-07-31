@@ -33,7 +33,7 @@
   --error-bg:      rgba(153, 27, 27, 0.18);
 
   /* ─── Typography tokens ────────────────────────────────────────────── */
-  --text-display: clamp(28px, 5vw, 40px);
+  --text-display: clamp(40px, 8vw, 72px);
   --text-heading: clamp(22px, 3vw, 24px);
   --text-body: 18px;
   --text-label: 14px;
