@@ -1,2 +1,5 @@
 # Data
 output/
+
+# Python
+__pycache__/
