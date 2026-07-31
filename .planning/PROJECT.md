@@ -19,10 +19,19 @@ Anyone can curl the GitHub Pages endpoint and get a Quran verse (Arabic + Basmei
 
 ### Active
 
-- [ ] Add Basmeih Malay translation (`ms.basmeih`) to the SQLite database
+- ✓ Add Basmeih Malay translation (`ms.basmeih`) to the SQLite database — Validated in Phase 1: Malay Translation Data
+- ✓ 6,236 ayah_edition rows for ms.basmeih edition — Validated in Phase 1
+- ✓ 134 existing editions intact after adding Malay — Validated in Phase 1
+- ✓ JSON generator script (`generate_json_api.py`) producing per-surah + search.json + surahs.json from SQLite — Validated in Phase 2: JSON API Generation
+- ✓ Per-surah JSON files (`api/surah/1.json`..`api/surah/114.json`) with Arabic + Malay — Validated in Phase 2
+- ✓ Full search index (`api/search.json`) all 6,236 ayahs for keyword filtering — Validated in Phase 2
+- ✓ validate mode: 114/114 files, 6236 verses, 0 errors — Validated in Phase 2
+- ✓ Stdlib-only, read-only DB, gitignored api/ — Validated in Phase 2
+
+### Active
+
 - [ ] Build a GitHub Pages static site with a curl-able JSON API
-- [ ] Per-surah JSON files (e.g. `/api/surah/2.json`) with Arabic + Malay
-- [ ] Full search index (`search.json`) built by GitHub Actions
+- [ ] GitHub Actions workflow builds and deploys JSON to Pages
 - [ ] Browser search UI styled with QuestUI design system
 - [ ] Searchable via `curl | jq` filtering
 
@@ -76,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-31 after initialization*
+*Last updated: 2026-07-31 after Phase 2 completion*
