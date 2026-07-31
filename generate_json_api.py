@@ -174,8 +174,8 @@ def cmd_validate(args):
             if numbers != list(range(1, 115)):
                 errors.append('surahs.json: numbers not 1..114 in order')
             for s in surahs_data:
-                expected_keys = ['number', 'name_ar', 'name_en',
-                                 'name_en_translation', 'type', 'ayah_count']
+                expected_keys = ['ayah_count', 'name_ar', 'name_en',
+                                 'name_en_translation', 'number', 'type']
                 if sorted(s.keys()) != expected_keys:
                     errors.append('surahs.json: bad keys')
                     break
