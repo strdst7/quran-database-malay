@@ -660,7 +660,12 @@ function loadIndex() {
     els.status.textContent = '';
     showPreSearchState();
     renderFeatured();
-  }).catch(function () {
+  }).catch(function (err) {
+    // WR-03: surface the failure reason (HTTP status / network) so operators
+    // with DevTools open get a signal instead of a silently swallowed error.
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn('loadIndex failed:', err && err.message);
+    }
     showErrorState();
   });
 }
