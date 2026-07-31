@@ -78,44 +78,94 @@ function search(terms, verses) {
 }
 
 // ── XSS-safe highlighting (Pattern 2 — createElement + textContent, no raw HTML) ──
-function appendHighlighted(container, text, term) {
-  var re = arRegex(term);
-  if (!re) {
-    container.appendChild(document.createTextNode(text));
-    return;
+// CR-01: highlight ALL terms in a SINGLE pass so the verse text is emitted
+// exactly once regardless of how many terms match. The pure range/segment
+// helpers below are exported for unit testing (no DOM required).
+var AR_TRAIL_DIAC = /[\u0640\u064B-\u0654\u0670\u06D6-\u06ED]/;
+
+// Pure: merged, non-overlapping highlight ranges for an Arabic string given an
+// array of terms. Fold-aware (Pattern 2): each term is folded, then matched
+// against the raw text with per-char alef/taa-marbuta/alef-maksura variant
+// classes, inter-char diacritic allowance, and trailing-diacritic span
+// extension (Pitfall 3). Returns [[start, end], ...].
+function arabicHighlightRanges(text, terms) {
+  var ranges = [];
+  for (var t = 0; t < terms.length; t++) {
+    var re = arRegex(terms[t]);
+    if (!re) continue;
+    var m;
+    while ((m = re.exec(text)) !== null) {
+      var end = m.index + m[0].length;
+      // Extend over trailing diacritics (Pitfall 3)
+      while (AR_TRAIL_DIAC.test(text[end] || '')) end++;
+      ranges.push([m.index, end]);
+      re.lastIndex = end;
+    }
   }
-  var last = 0, m;
-  var DIAC_RANGE = /[\u0640\u064B-\u0654\u0670\u06D6-\u06ED]/;
-  while ((m = re.exec(text)) !== null) {
-    var end = m.index + m[0].length;
-    // Extend over trailing diacritics (Pitfall 3)
-    while (DIAC_RANGE.test(text[end] || '')) end++;
-    container.appendChild(document.createTextNode(text.slice(last, m.index)));
-    var mark = document.createElement('mark');
-    mark.appendChild(document.createTextNode(text.slice(m.index, end)));
-    container.appendChild(mark);
-    last = end;
-    re.lastIndex = end;
+  if (!ranges.length) return [];
+  ranges.sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+  var merged = [ranges[0]];
+  for (var i = 1; i < ranges.length; i++) {
+    var last = merged[merged.length - 1];
+    if (ranges[i][0] <= last[1]) {
+      if (ranges[i][1] > last[1]) last[1] = ranges[i][1];
+    } else {
+      merged.push(ranges[i]);
+    }
   }
-  container.appendChild(document.createTextNode(text.slice(last)));
+  return merged;
 }
 
-// Latin/Malay highlighting: case-insensitive escaped regex
-function appendLatinHighlighted(container, text, term) {
-  var safe = esc(term);
-  if (!safe) {
+function appendHighlighted(container, text, terms) {
+  var merged = arabicHighlightRanges(text, terms);
+  if (!merged.length) {
     container.appendChild(document.createTextNode(text));
     return;
   }
-  var re = new RegExp('(' + safe + ')', 'gi');
-  var parts = text.split(re);
-  for (var i = 0; i < parts.length; i++) {
-    if (i % 2 === 1) {
+  var cursor = 0;
+  for (var i = 0; i < merged.length; i++) {
+    if (merged[i][0] > cursor) {
+      container.appendChild(document.createTextNode(text.slice(cursor, merged[i][0])));
+    }
+    var mark = document.createElement('mark');
+    mark.appendChild(document.createTextNode(text.slice(merged[i][0], merged[i][1])));
+    container.appendChild(mark);
+    cursor = merged[i][1];
+  }
+  if (cursor < text.length) {
+    container.appendChild(document.createTextNode(text.slice(cursor)));
+  }
+}
+
+// Pure: split a Latin/Malay string into highlight segments given an array of
+// terms. Case-insensitive, metacharacter-escaped alternation regex; a single
+// split yields one traversal and no duplication. Returns [{ text, mark }, ...].
+function latinSegments(text, terms) {
+  var parts = [];
+  for (var i = 0; i < terms.length; i++) {
+    var safe = esc(terms[i]);
+    if (safe) parts.push(safe);
+  }
+  if (!parts.length) return [{ text: text, mark: false }];
+  var re = new RegExp('(' + parts.join('|') + ')', 'gi');
+  var out = [];
+  text.split(re).forEach(function (chunk, i) {
+    if (!chunk) return;
+    out.push({ text: chunk, mark: i % 2 === 1 });
+  });
+  return out;
+}
+
+// Latin/Malay highlighting: case-insensitive escaped alternation regex, single pass.
+function appendLatinHighlighted(container, text, terms) {
+  var segs = latinSegments(text, terms);
+  for (var i = 0; i < segs.length; i++) {
+    if (segs[i].mark) {
       var mark = document.createElement('mark');
-      mark.appendChild(document.createTextNode(parts[i]));
+      mark.appendChild(document.createTextNode(segs[i].text));
       container.appendChild(mark);
     } else {
-      container.appendChild(document.createTextNode(parts[i]));
+      container.appendChild(document.createTextNode(segs[i].text));
     }
   }
 }
@@ -394,9 +444,7 @@ function renderCard(verse, terms) {
   arabicEl.setAttribute('lang', 'ar');
 
   if (terms && terms.length) {
-    for (var i = 0; i < terms.length; i++) {
-      appendHighlighted(arabicEl, verse.arabic, terms[i]);
-    }
+    appendHighlighted(arabicEl, verse.arabic, terms);
   } else {
     arabicEl.textContent = verse.arabic;
   }
@@ -407,9 +455,7 @@ function renderCard(verse, terms) {
   malayEl.setAttribute('lang', 'ms');
 
   if (terms && terms.length) {
-    for (var i = 0; i < terms.length; i++) {
-      appendLatinHighlighted(malayEl, verse.malay, terms[i]);
-    }
+    appendLatinHighlighted(malayEl, verse.malay, terms);
   } else {
     malayEl.textContent = verse.malay;
   }
@@ -646,5 +692,5 @@ if (typeof document !== 'undefined') {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { foldAr: foldAr, foldMs: foldMs, search: search, arRegex: arRegex, surahLabel: surahLabel, MALAY_SURAH_NAMES: MALAY_SURAH_NAMES, levAtMost: levAtMost };
+  module.exports = { foldAr: foldAr, foldMs: foldMs, search: search, arRegex: arRegex, surahLabel: surahLabel, MALAY_SURAH_NAMES: MALAY_SURAH_NAMES, levAtMost: levAtMost, arabicHighlightRanges: arabicHighlightRanges, latinSegments: latinSegments };
 }
