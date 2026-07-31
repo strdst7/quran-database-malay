@@ -84,8 +84,15 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Build QuestUI-styled search page (HTML/CSS/JS)
-- [ ] 04-02: Wire page to search index, test locally and after deploy
+**Wave 1**
+- [ ] 04-01-PLAN.md — Build QuestUI-styled search page (HTML/CSS/JS) per UI-SPEC contract
+**Wave 2 *(blocked on Wave 1 completion)* **
+- [ ] 04-02-PLAN.md — Wire page into deploy workflow, test locally and after deploy
+
+**Cross-cutting constraints:**
+- The 5-field verse contract `{arabic, malay, surah, ayah, id}` from `api/search.json` (6,236 verses, id order 1–6236) is consumed as-is — no new index file (D-01/D-04) — shared by 04-01 (app.js search/rendering) and 04-02 (local + live verification)
+- XSS-safe rendering: zero `innerHTML` in app.js (T-04-01 mitigation, RESEARCH Pitfall 4) — enforced by grep gates in 04-01 task 3 and exercised by 04-02's DOM smoke
+- Only `api/` + the 3 UI files (`index.html`, `style.css`, `app.js`) are staged into `_site/`; `app.test.mjs` is never published (D-21) — 04-01 produces the files, 04-02's Stage-site edit + staging simulation enforce it
 
 ## Progress
 

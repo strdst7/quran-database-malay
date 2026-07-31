@@ -618,7 +618,11 @@ test('label format (D-15) incl. user correction', () => {
 | A5 | Extending D-06's fold set with ة→ه and ى→ي (canonical Lucene rules, not locked by D-06's text) | Pattern 1 | Changes recall: `على` matches `علي`, `رحمة` matches `رحمه` — standard Quran-search behavior; if the user objects, deleting two map entries disables it. Flag for discuss-phase confirmation |
 | A6 | Google Fonts `<link>` remains reachable (fonts.googleapis.com is the D-23-locked source) | Standard Stack | If blocked, `font-display: swap` + the fallback serif stack keeps the page readable; no functional loss |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> Both questions resolved during plan-phase 2026-07-31 — see 04-01-PLAN.md and 04-02-PLAN.md:
+> - **OQ1 → RESOLVED:** ship the English-only fallback. 04-01 task 3 implements `surahLabel()` per Code Example 5: when the map entry has `tr: ''` (surahs 20, 36, 38, 50), the label renders `Taahaa (The Letters Ta, Ha) • 20:1` — English-only, trivially adjustable later.
+> - **OQ2 → RESOLVED:** include the CSP `<meta>` in index.html. 04-01 task 1 adds the `<meta http-equiv="Content-Security-Policy">` tag (default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; img-src 'self'; connect-src 'self') as a discretionary one-line hardening; 04-02 task 3 tests Google Fonts rendering live and drops the tag if it breaks fonts (documented in the 04-01 task 1 action).
 
 1. **Should the label also highlight when the Malay map lacks a translation (surahs 20, 36, 38, 50)?**
    - What we know: Wikipedia gives no Malay translation for those 4; the fallback in Code Example 5 renders `Taahaa (The Letters Ta, Ha) • 20:1`-style labels.
