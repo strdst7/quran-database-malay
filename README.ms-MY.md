@@ -1,10 +1,10 @@
-# Al-Quran — Pangkalan Data Quran Melayu
+# Al-Quran - Pangkalan Data Quran Melayu
 
-> Cari ayat Al-Quran mengikut teks Arab dan **terjemahan Melayu Basmeih** — terus dalam pelayar, atau melalui `curl`. Indeks penuh 6,236 ayat dimuat terus ke pelayar anda.
+> Cari ayat Al-Quran mengikut teks Arab dan **terjemahan Melayu Basmeih** - terus dalam pelayar, atau melalui `curl`. Indeks penuh 6,236 ayat dimuat terus ke pelayar anda.
 
 > 🇬🇧 **Versi Inggeris:** lihat [README.md](README.md).
 
-> 🍴 **Fork** daripada [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) — ditumpukan semula kepada terjemahan Melayu Basmeih (`ms.basmeih`), dengan API JSON statik di GitHub Pages dan halaman carian pelayar bergaya QuestUI.
+> 🍴 **Fork** daripada [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) - ditumpukan semula kepada terjemahan Melayu Basmeih (`ms.basmeih`), dengan API JSON statik di GitHub Pages dan halaman carian pelayar bergaya QuestUI.
 
 ---
 
@@ -23,21 +23,21 @@
 ## Panduan Mula Cepat
 
 ### Dalam pelayar anda
-Buka **<https://C-Fu.github.io/quran-database-malay/>** dan taip satu perkataan — hasil muncul semasa anda menaip (Melayu *dan* Arab, digabungkan).
+Buka **<https://C-Fu.github.io/quran-database-malay/>** dan taip satu perkataan - hasil muncul semasa anda menaip (Melayu *dan* Arab, digabungkan).
 
 <p align="center">
-  <img src="screenshots/quran-screenshot.png" alt="Halaman carian Quran QuestUI — langsung di GitHub Pages (Arab RTL + Melayu Basmeih, padanan diserlahkan emas)" width="860">
+  <img src="screenshots/quran-screenshot.png" alt="Halaman carian Quran QuestUI - langsung di GitHub Pages (Arab RTL + Melayu Basmeih, padanan diserlahkan emas)" width="860">
 </p>
 
-> Halaman carian QuestUI langsung — latar belakang gelap hangat, tajuk emas Cinzel, carian sambil-taip dengan padanan diserlahkan. Setiap kad memaparkan **Arab (kanan-ke-kiri)** di atas dan terjemahan **Melayu Basmeih** di bawah.
+> Halaman carian QuestUI langsung - latar belakang gelap hangat, tajuk emas Cinzel, carian sambil-taip dengan padanan diserlahkan. Setiap kad memaparkan **Arab (kanan-ke-kiri)** di atas dan terjemahan **Melayu Basmeih** di bawah.
 
 ### Dari baris arahan
 
-Tanpa pengesahan, tanpa pemasangan — JSON itu awam di GitHub Pages. Pilih platform anda untuk setiap tugas.
+Tanpa pengesahan, tanpa pemasangan - JSON itu awam di GitHub Pages. Pilih platform anda untuk setiap tugas.
 
-> **Nota Windows:** PowerShell mengalias `curl` kepada `Invoke-WebRequest` dan `jq` tidak dipasang secara lalai — jadi gunakan contoh **PowerShell** (`Invoke-RestMethod`) di bawah. Jika anda ada `curl` + `jq` sebenar (cth. via WSL, Git Bash, atau `winget install jqlang.jq`), blok macOS/Linux juga berfungsi.
+> **Nota Windows:** PowerShell mengalias `curl` kepada `Invoke-WebRequest` dan `jq` tidak dipasang secara lalai - jadi gunakan contoh **PowerShell** (`Invoke-RestMethod`) di bawah. Jika anda ada `curl` + `jq` sebenar (cth. via WSL, Git Bash, atau `winget install jqlang.jq`), blok macOS/Linux juga berfungsi.
 
-#### 1. Dapatkan keseluruhan surah (Arab + Melayu Basmeih) — Al-Baqarah, 286 ayat
+#### 1. Dapatkan keseluruhan surah (Arab + Melayu Basmeih) - Al-Baqarah, 286 ayat
 
 macOS / Linux:
 ```bash
@@ -55,7 +55,7 @@ macOS / Linux (guna [`jq`](https://jqlang.github.io/jq/)):
 curl -s https://C-Fu.github.io/quran-database-malay/api/search.json \
   | jq '.[] | select(.malay | contains("rahmat"))'
 ```
-Windows (PowerShell — tanpa `jq`):
+Windows (PowerShell - tanpa `jq`):
 ```powershell
 (Invoke-RestMethod https://C-Fu.github.io/quran-database-malay/api/search.json) |
   Where-Object malay -match 'rahmat' |
@@ -78,17 +78,19 @@ Setiap objek ayat mempunyai tepat **5 medan**:
 {"arabic":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ","malay":"Dengan nama Allah, Yang Maha Pemurah, lagi Maha Mengasihani.","surah":1,"ayah":1,"id":1}
 ```
 
+> 💡 **"`ayah`" = ayat, bukan ayah (bapa).** Medan `ayah` datang daripada perkataan Arab آية (*āyah*, "tanda/ayat") - sama dengan *ayat* dalam Bahasa Melayu. Ia **tidak** bermaksud perkataan Melayu harian *ayah* ("bapa"). Jadi `"ayah": 1` ertinya ayat 1, bukan "ayah 1".
+
 ---
 
 ## Apakah projek ini
 
 Projek ini mengambil keseluruhan Al-Quran (teks Arab + 134 edisi terjemahan) dan **meletakkan terjemahan Melayu Basmeih di barisan hadapan**, didedahkan tiga cara:
 
-1. **API JSON statik yang boleh dicurl** di GitHub Pages — fail per-surah, indeks carian penuh, dan metadata surah.
-2. **Halaman carian pelayar** bergaya sistem reka bentuk [QuestUI](https://designmd.ai/chef/questui) — carian segera sambil-taip untuk Arab + Melayu.
+1. **API JSON statik yang boleh dicurl** di GitHub Pages - fail per-surah, indeks carian penuh, dan metadata surah.
+2. **Halaman carian pelayar** bergaya sistem reka bentuk [QuestUI](https://designmd.ai/chef/questui) - carian segera sambil-taip untuk Arab + Melayu.
 3. **Pangkalan data SQLite sedia untuk dicari** (`quran.db`) dengan kekunci asing, kekangan CHECK, indeks, dan jadual rujukan juz/hizb.
 
-**Nilai teras:** *Sesiapa boleh `curl` titik akhir dan mendapatkan ayat Al-Quran (Arab + Melayu Basmeih) melalui carian — pantas, boleh dipercayai, dan tanpa pengesahan.*
+**Nilai teras:** *Sesiapa boleh `curl` titik akhir dan mendapatkan ayat Al-Quran (Arab + Melayu Basmeih) melalui carian - pantas, boleh dipercayai, dan tanpa pengesahan.*
 
 Terjemahan Basmeih (`ms.basmeih`, *Tafsir Pimpinan Ar-Rahman*) meliputi kesemua **6,236 ayat** dan diambil daripada API awam [alquran.cloud](https://alquran.cloud).
 
@@ -96,7 +98,7 @@ Terjemahan Basmeih (`ms.basmeih`, *Tafsir Pimpinan Ar-Rahman*) meliputi kesemua 
 
 ## Bagaimana semuanya berfungsi
 
-Keseluruhannya adalah kisah **saluran binaan + pengehosan statik**. Tiada pelayan memproses permintaan — GitHub Pages menyajikan JSON yang dibina lebih awal, dan pelayar melakukan semua carian di sisi klien.
+Keseluruhannya adalah kisah **saluran binaan + pengehosan statik**. Tiada pelayan memproses permintaan - GitHub Pages menyajikan JSON yang dibina lebih awal, dan pelayar melakukan semua carian di sisi klien.
 
 ```mermaid
 flowchart LR
@@ -110,7 +112,7 @@ flowchart LR
   Z(["data/quran.sql.zip<br/>Dump MySQL"]):::src
   C["convert_to_sqlite.py<br/><i>MySQL → SQLite</i>"]:::py
   M["add_malay_translation.py<br/><i>+ Basmeih (ms.basmeih)</i>"]:::py
-  DB[("quran.db<br/>SQLite — 6 jadual")]:::db
+  DB[("quran.db<br/>SQLite - 6 jadual")]:::db
   G["generate_json_api.py<br/><i>--generate / --validate</i>"]:::py
   API[["api/<br/>114 surah + search.json<br/>+ surahs.json"]]:::out
   UI["index.html · style.css · app.js<br/><i>Halaman carian QuestUI</i>"]:::out
@@ -130,11 +132,11 @@ flowchart LR
 
 ### Saluran binaan (dijalankan dalam GitHub Actions pada setiap push ke `main`)
 
-1. **`gunzip quran.db.gz`** — nyahmampatkan pangkalan data SQLite yang dibina lebih awal.
-2. **`generate_json_api.py --generate`** — baca `quran.db` (baca sahaja), hasilkan `api/` (114 fail per-surah, `search.json` dengan 6,236 ayat, `surahs.json` dengan 114 entri).
-3. **`generate_json_api.py --validate`** — sahkan 114/114 fail surah, 6,236 jumlah ayat, 0 ralat. Keluaran bukan sifar menggagalkan binaan.
-4. **Pentas `_site/`** — salin `api/` + 3 fail UI (`index.html`, `style.css`, `app.js`) ke direktori pementasan.
-5. **`upload-pages-artifact` → `deploy-pages`** — terbitkan ke GitHub Pages.
+1. **`gunzip quran.db.gz`** - nyahmampatkan pangkalan data SQLite yang dibina lebih awal.
+2. **`generate_json_api.py --generate`** - baca `quran.db` (baca sahaja), hasilkan `api/` (114 fail per-surah, `search.json` dengan 6,236 ayat, `surahs.json` dengan 114 entri).
+3. **`generate_json_api.py --validate`** - sahkan 114/114 fail surah, 6,236 jumlah ayat, 0 ralat. Keluaran bukan sifar menggagalkan binaan.
+4. **Pentas `_site/`** - salin `api/` + 3 fail UI (`index.html`, `style.css`, `app.js`) ke direktori pementasan.
+5. **`upload-pages-artifact` → `deploy-pages`** - terbitkan ke GitHub Pages.
 
 Hanya `api/` dan 3 fail UI sahaja sampai ke CDN. Fail `quran.db.gz` 60 MB, fail ujian, dan semua skrip kekal di luar tapak awam.
 
@@ -142,7 +144,7 @@ Hanya `api/` dan 3 fail UI sahaja sampai ke CDN. Fail `quran.db.gz` 60 MB, fail 
 
 ## Tiga skrip Python
 
-Semua skrip menggunakan **stdlib Python 3 sahaja** — sifar kebergantungan.
+Semua skrip menggunakan **stdlib Python 3 sahaja** - sifar kebergantungan.
 
 | Skrip | Apa yang dilakukannya |
 | --- | --- |
@@ -281,7 +283,7 @@ flowchart TB
   S --> R --> OUT
 ```
 
-### 1. Pelipatan Arab — `foldAr()` (app.js)
+### 1. Pelipatan Arab - `foldAr()` (app.js)
 Pemadanan mengabaikan diakritik Quran dan varian huruf, jadi menaip **الله** menemui بِسْمِ ٱللَّهِ.
 
 - Tanggalkan **tatweel + tashkeel + tanda Quran**: `[\u0640\u064B-\u0654\u0670\u06D6-\u06ED]` (kashida, harakat, hamzah, wasla, dll.)
@@ -291,7 +293,7 @@ Pemadanan mengabaikan diakritik Quran dan varian huruf, jadi menaip **الله**
 
 Berasaskan pendekatan kanonik `ArabicNormalizer` Lucene.
 
-### 2. Pelipatan Melayu/Latin — `foldMs()` (app.js)
+### 2. Pelipatan Melayu/Latin - `foldMs()` (app.js)
 Pemadanan mengabaikan tanda aksen dan huruf besar/kecil, jadi menaip **BERIMAN** menemui "beriman".
 
 ```js
@@ -299,42 +301,42 @@ s.normalize('NFD').replace(/[\u0300-\u036F]/g, '').toLowerCase()
 ```
 Penguraian Unicode **NFD** → tanggalkan tanda diakritik bergabung (`U+0300–036F`) → huruf kecil.
 
-### 3. Cermin lipat-sekali — `search(terms)`
-Daripada melipat setiap ayat pada setiap ketukan kekunci, keseluruhan indeks dilipat **sekali semasa muat halaman** menjadi tatasusunan cermin rentetan terlipat `{ar, ms}`. Setiap carian kemudian mengimbas cermin — sebab itulah carian adalah segera (~2.6 ms/ketukan pada keseluruhan 6,236 ayat).
+### 3. Cermin lipat-sekali - `search(terms)`
+Daripada melipat setiap ayat pada setiap ketukan kekunci, keseluruhan indeks dilipat **sekali semasa muat halaman** menjadi tatasusunan cermin rentetan terlipat `{ar, ms}`. Setiap carian kemudian mengimbas cermin - sebab itulah carian adalah segera (~2.6 ms/ketukan pada keseluruhan 6,236 ayat).
 
 - **AND antara terma**: pertanyaan pelbagai perkataan memerlukan *setiap* terma dipadan (`pemurah langit` → 3 ayat).
-- **Melayu + Arab bergabung**: satu kotak carian mencari kedua-dua medan bersama — tiada togol.
+- **Melayu + Arab bergabung**: satu kotak carian mencari kedua-dua medan bersama - tiada togol.
 - **Tertib id**: hasil kembali dalam tertib id-ayah global (1–6236), tertib Quran semula jadi.
 
-### 4. Serlahan regex sedar-lipat — `arRegex()` + `appendHighlighted()`
-Teks ayat **asal** (penuh diakritik) dipaparkan, dengan padanan dibungkus dalam `<mark>`. Regex serlahan dibina dengan melipat *pertanyaan*, kemudian mengembangkan setiap aksara asas menjadi kelas aksara (varian alef, ة/ه, ى/ي) yang disambung dengan kelas elaan diakritik — jadi serlahan mendarat pada glif yang betul walaupun teks yang dipaparkan masih membawa tashkeel.
+### 4. Serlahan regex sedar-lipat - `arRegex()` + `appendHighlighted()`
+Teks ayat **asal** (penuh diakritik) dipaparkan, dengan padanan dibungkus dalam `<mark>`. Regex serlahan dibina dengan melipat *pertanyaan*, kemudian mengembangkan setiap aksara asas menjadi kelas aksara (varian alef, ة/ه, ى/ي) yang disambung dengan kelas elaan diakritik - jadi serlahan mendarat pada glif yang betul walaupun teks yang dipaparkan masih membawa tashkeel.
 
-### 5. "Mungkin maksud anda?" kabur — `levAtMost()` (Levenshtein berjalur)
-Apabila carian tidak memulangkan apa-apa, jarak **Levenshtein berjalur** (keluar-awal, ambang ≤1 untuk perkataan pendek / ≤2 untuk panjang) dijalankan ke atas indeks perkataan yang dibina secara malas, dibahagikan mengikut aksara pertama + panjang. Ia mencadangkan sehingga 5 alternatif "Mungkin maksud anda:" — cth. taipan menemui perkataan sebenar.
+### 5. "Mungkin maksud anda?" kabur - `levAtMost()` (Levenshtein berjalur)
+Apabila carian tidak memulangkan apa-apa, jarak **Levenshtein berjalur** (keluar-awal, ambang ≤1 untuk perkataan pendek / ≤2 untuk panjang) dijalankan ke atas indeks perkataan yang dibina secara malas, dibahagikan mengikut aksara pertama + panjang. Ia mencadangkan sehingga 5 alternatif "Mungkin maksud anda:" - cth. taipan menemui perkataan sebenar.
 
-### 6. Pemaparan selamat XSS — sifar `innerHTML`
-**Setiap** nod DOM dibina dengan `createElement` + `textContent` + `setAttribute` — `grep -c innerHTML app.js` memulangkan **0**. Pertanyaan yang direka seperti `<img src=x onerror=…>` tidak boleh dilaksanakan, kerana ia tidak pernah dihuraikan sebagai HTML. Ini dikuatkuasakan oleh suit ujian (`app.test.mjs`, `node --test`).
+### 6. Pemaparan selamat XSS - sifar `innerHTML`
+**Setiap** nod DOM dibina dengan `createElement` + `textContent` + `setAttribute` - `grep -c innerHTML app.js` memulangkan **0**. Pertanyaan yang direka seperti `<img src=x onerror=…>` tidak boleh dilaksanakan, kerana ia tidak pernah dihuraikan sebagai HTML. Ini dikuatkuasakan oleh suit ujian (`app.test.mjs`, `node --test`).
 
 ---
 
 ## Antara Muka Carian (QuestUI)
 
-Halaman bergaya fantasi/RPG yang ditala untuk membaca Al-Quran — latar belakang gelap hangat, tajuk emas Cinzel, badan Spectral, Arab disusun kanan-ke-kiri di atas Melayu.
+Halaman bergaya fantasi/RPG yang ditala untuk membaca Al-Quran - latar belakang gelap hangat, tajuk emas Cinzel, badan Spectral, Arab disusun kanan-ke-kiri di atas Melayu.
 
 | | |
 |---|---|
 | **Palet** | latar `#1A0F0A` · emas `#CA8A04` · merah gelap `#991B1B` (sempadan) · ungu diraja `#581C87` (dekoratif) · perkamen `#F5E6D3` (teks) |
-| **Jenis** | Cinzel 600 (tajuk) · Spectral (badan & Arab) — dari Google Fonts |
+| **Jenis** | Cinzel 600 (tajuk) · Spectral (badan & Arab) - dari Google Fonts |
 | **Tataletak** | mobile-first; satu-lajur < 768 px, grid hasil dua-lajur ≥ 768 px |
 | **Kelakuan** | debounce 250 ms · had 100 hasil + tunjuk-lagi "Tunjukkan lagi" · keadaan memuat/ralat/cuba-semula · ayat pilihan (Al-Fatihah, Ayatul Kursi, Al-Ikhlas) |
 
-> `<html lang="ms">` — keseluruhan teks UI adalah Bahasa Melayu. Setiap kad hasil: **Arab di atas (RTL, `lang=ar`)** dan **Melayu di bawah (LTR, `lang=ms`)**.
+> `<html lang="ms">` - keseluruhan teks UI adalah Bahasa Melayu. Setiap kad hasil: **Arab di atas (RTL, `lang=ar`)** dan **Melayu di bawah (LTR, `lang=ms`)**.
 
 ---
 
 ## Rujukan API
 
-URL asas: `https://C-Fu.github.io/quran-database-malay` — awam, tanpa pengesahan, tanpa had kadar (CDN statik). Setiap respons ialah `Content-Type: application/json`, UTF-8.
+URL asas: `https://C-Fu.github.io/quran-database-malay` - awam, tanpa pengesahan, tanpa had kadar (CDN statik). Setiap respons ialah `Content-Type: application/json`, UTF-8.
 
 | Titik akhir | Memulangkan |
 | --- | --- |
@@ -343,13 +345,13 @@ URL asas: `https://C-Fu.github.io/quran-database-malay` — awam, tanpa pengesah
 | `GET /api/surahs.json` | Tatasusunan metadata semua 114 surah |
 
 ### `GET /api/surah/{n}.json`
-Semua ayat dalam sesebuah surah — setiap ayat membawa Arab + Melayu Basmeih.
+Semua ayat dalam sesebuah surah - setiap ayat membawa Arab + Melayu Basmeih.
 
 ```bash
 curl https://C-Fu.github.io/quran-database-malay/api/surah/2.json   # Al-Baqarah
 ```
 
-Respons — tatasusunan dengan satu objek per ayat (panjang = bilangan ayat, cth. **286** untuk Al-Baqarah). `id` ialah id ayat global (1–6236):
+Respons - tatasusunan dengan satu objek per ayat (panjang = bilangan ayat, cth. **286** untuk Al-Baqarah). `id` ialah id ayat global (1–6236):
 ```json
 [
   {"arabic":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ الٓمٓ","malay":"Alif, Laam, Miim.","surah":2,"ayah":1,"id":8}
@@ -358,7 +360,7 @@ Respons — tatasusunan dengan satu objek per ayat (panjang = bilangan ayat, cth
 ```
 
 ### `GET /api/search.json`
-Indeks carian penuh — tatasusunan rata **3.2 MB** semua 6,236 ayat dalam tertib id-global. Muat turun sekali, kemudian tapis secara tempatan dengan `jq` / PowerShell / Python.
+Indeks carian penuh - tatasusunan rata **3.2 MB** semua 6,236 ayat dalam tertib id-global. Muat turun sekali, kemudian tapis secara tempatan dengan `jq` / PowerShell / Python.
 
 ```bash
 # Berapa banyak ayat menyebut "rahmat" dalam terjemahan Melayu? (peka huruf besar)
@@ -388,7 +390,7 @@ Respons (2 daripada 114 yang pertama):
 ]
 ```
 
-Direktori `api/` **diabaikan-git** dan dibina oleh GitHub Actions pada setiap push ke `main`, kemudian digerakkan ke GitHub Pages — jadi JSON sentiasa mencerminkan data terkini yang dilakukan.
+Direktori `api/` **diabaikan-git** dan dibina oleh GitHub Actions pada setiap push ke `main`, kemudian digerakkan ke GitHub Pages - jadi JSON sentiasa mencerminkan data terkini yang dilakukan.
 
 ---
 
@@ -424,7 +426,7 @@ Sila pastikan terjemahan tepat (rujuk sumber ilmiah yang terkemuka) dan ikuti ko
 
 ## Penghargaan & lesen
 
-- **Sumber hulu:** [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) — pangkalan data Quran MySQL/SQLite asal yang difork oleh projek ini.
+- **Sumber hulu:** [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) - pangkalan data Quran MySQL/SQLite asal yang difork oleh projek ini.
 - **Terjemahan:** *Tafsir Pimpinan Ar-Rahman* (Basmeih), diperoleh melalui API awam [alquran.cloud](https://alquran.cloud) sebagai edisi `ms.basmeih`.
 - **Reka bentuk:** sistem reka bentuk [QuestUI](https://designmd.ai/chef/questui).
 
