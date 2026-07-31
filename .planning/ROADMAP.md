@@ -40,8 +40,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Write JSON generator script (per-surah files + search index)
-- [ ] 02-02: Validate output structure, sizes, and verse count coverage
+- [ ] 02-01-PLAN.md — Write JSON generator script (per-surah files + search index)
+- [ ] 02-02-PLAN.md — Validate output structure, sizes, and verse count coverage
 
 ### Phase 3: GitHub Pages Deployment
 **Goal**: A GitHub Actions workflow builds the JSON files and deploys them to GitHub Pages; README documents curl + jq usage
