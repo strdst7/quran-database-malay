@@ -40,8 +40,15 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
+**Wave 1**
 - [ ] 02-01-PLAN.md — Write JSON generator script (per-surah files + search index)
+**Wave 2 *(blocked on Wave 1 completion)* **
 - [ ] 02-02-PLAN.md — Validate output structure, sizes, and verse count coverage
+
+**Cross-cutting constraints:**
+- Every verse object has exactly the 5 keys `arabic, malay, surah, ayah, id` with non-empty Arabic and Malay text (D-02) — shared contract across all output files
+- `search.json` is a flat array of 6,236 verse objects in global id order 1–6236, built in the same generation pass as the surah files (D-04/D-05/D-06)
+- `--validate` exits 0 with 114/114 surah files, 6,236 total verses, 0 errors (D-17/D-18) — the phase's automated test surface
 
 ### Phase 3: GitHub Pages Deployment
 **Goal**: A GitHub Actions workflow builds the JSON files and deploys them to GitHub Pages; README documents curl + jq usage
