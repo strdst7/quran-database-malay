@@ -162,7 +162,7 @@ All values are multiples of 4. Standard 8-point scale.
 | Element | Value | Why |
 |---------|-------|-----|
 | Search input height | **56px** | ≥44px touch target (WCAG 2.5.5) + comfortable thumb typing |
-| Search input padding-y | 14px | Centers 18px Spectral text in 56px height |
+| Search input padding-y | 12px | Optical centering of 18px Spectral text in 56px height (56 − 12×2 = 32px text lane, comfortably fits the 18px/line-height-1 line) |
 | "Show more" / "Retry" button height | **44px** | WCAG 2.5.5 min touch target |
 | "Show more" / "Retry" button padding-x | 24px | Comfortable click area beyond label |
 | Verse card Arabic margin-bottom | 12px | Tighter than `md` so Arabic + Malay read as a unit |
@@ -240,7 +240,7 @@ Each spec is the source of truth — executor implements verbatim. Class names a
 - Container `.search`: full-width mobile, `max-width: 720px; margin: 0 auto` desktop, padding `0 16px`
 - `#search-input`:
   - `width: 100%`, `height: 56px`
-  - `padding: 14px 16px`
+  - `padding: 12px 16px`
   - `background: var(--surface-raised)`
   - `border: 1px solid var(--border)`
   - `border-radius: 8px`
@@ -329,7 +329,7 @@ Each spec is the source of truth — executor implements verbatim. Class names a
 **Spec:**
 - `<button class="show-more">`
 - `display: block; margin: 32px auto 0;`
-- `min-height: 44px; padding: 10px 24px;` (≥44px touch target)
+- `min-height: 44px; padding: 12px 24px;` (≥44px touch target; padding-y only does optical centering — min-height enforces the touch target)
 - `background: transparent; color: var(--text-primary);`
 - `border: 1px solid var(--accent-gold); border-radius: 8px;`
 - `font: 600 var(--text-label)/1 var(--font-body);`
@@ -423,7 +423,7 @@ Triggered when `fetch('api/search.json')` rejects or returns non-OK. Ties to pro
 - `.error-card`: `background: var(--surface); border: 1px solid var(--accent-red); border-radius: 8px; padding: 48px 24px; text-align: center; max-width: 640px; margin: 48px auto; box-shadow: 0 0 0 1px var(--error-bg) inset;`
 - `.error-title`: Cinzel 600 `var(--text-heading)`, color `--accent-gold`, `margin-bottom: 16px`
 - `.error-body`: Spectral 400 `var(--text-body)`, color `--text-primary`, `line-height: 1.6`, `margin-bottom: 24px`
-- `.error-curl` (`<pre><code>`): `background: var(--bg); color: var(--text-primary); padding: 16px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5; text-align: left; overflow-x: auto; border: 1px solid var(--border);`
+- `.error-curl` (`<pre><code>`): `background: var(--bg); color: var(--text-primary); padding: 16px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; text-align: left; overflow-x: auto; border: 1px solid var(--border);`
 - `.retry-button`: same as `.show-more` (44px min-height, gold border, parchment text, gold-fill on hover)
 
 **Copy (verbatim, Bahasa Melayu):**
