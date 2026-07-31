@@ -16,7 +16,7 @@
 ![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-static-121013?logo=github&logoColor=white)
 ![jq](https://img.shields.io/badge/jq-filtering-C8A948?logo=jq&logoColor=black)
 ![No Build Step](https://img.shields.io/badge/build-none-CA8A04?style=flat)
-![License](https://img.shields.io/badge/license-open%20source-581C87)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ---
 
@@ -428,4 +428,4 @@ Sila pastikan terjemahan tepat (rujuk sumber ilmiah yang terkemuka) dan ikuti ko
 - **Terjemahan:** *Tafsir Pimpinan Ar-Rahman* (Basmeih), diperoleh melalui API awam [alquran.cloud](https://alquran.cloud) sebagai edisi `ms.basmeih`.
 - **Reka bentuk:** sistem reka bentuk [QuestUI](https://designmd.ai/chef/questui).
 
-Projek ini adalah sumber terbuka. Teks Al-Quran adalah domain awam.
+Projek ini adalah sumber terbuka. **Kod sumber dilesenkan di bawah [Lesen MIT](LICENSE).** Teks Al-Quran (Arab) adalah domain awam. Data terjemahan (`ms.basmeih` dan 133 edisi lain) kekal dengan lesen sumber masing-masing.

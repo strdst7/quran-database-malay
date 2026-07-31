@@ -18,7 +18,7 @@
 ![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-static-121013?logo=github&logoColor=white)
 ![jq](https://img.shields.io/badge/jq-filtering-C8A948?logo=jq&logoColor=black)
 ![No Build Step](https://img.shields.io/badge/build-none-CA8A04?style=flat)
-![License](https://img.shields.io/badge/license-open%20source-581C87)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ---
 
@@ -431,4 +431,4 @@ Please keep translations accurate (reference established scholarly sources) and 
 - **Translation:** *Tafsir Pimpinan Ar-Rahman* (Basmeih), sourced via the public [alquran.cloud](https://alquran.cloud) API as edition `ms.basmeih`.
 - **Design:** [QuestUI](https://designmd.ai/chef/questui) design system.
 
-This project is open source. The Quran text is in the public domain.
+This project is open source. **The source code is licensed under the [MIT License](LICENSE).** The Quran text (Arabic) is in the public domain. Translation data (`ms.basmeih` and the other 133 editions) retains the licensing of its respective sources.
