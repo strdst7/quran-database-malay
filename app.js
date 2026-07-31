@@ -379,32 +379,54 @@ function fuzzySuggest(terms) {
     var q = terms[ti];
     var qAr = foldAr(q);
     var qMs = foldMs(q);
-    var qLen = qAr.length;
-    var threshold = qLen <= 4 ? 1 : 2;
-    var fc = qAr[0];
 
-    var fcMap = state._wordIndex.get(fc);
-    if (!fcMap) continue;
+    // WR-04: score the Arabic and Malay forms against their OWN first-char /
+    // length buckets. Previously both levAtMost(qAr,…) and levAtMost(qMs,…)
+    // ran against the qAr[0] bucket, so close Malay matches whose first char
+    // differs from qAr[0] were never considered.
 
-    for (var len = qLen - threshold; len <= qLen + threshold; len++) {
-      var bucket = fcMap.get(len);
-      if (!bucket) continue;
-      for (var bi = 0; bi < bucket.length; bi++) {
-        var entry = bucket[bi];
-        var dist = levAtMost(qAr, entry.word, threshold);
-        if (dist <= threshold) {
-          var existing = scoredMap.get(entry.verseIndex);
-          if (existing === undefined || dist < existing) {
-            scoredMap.set(entry.verseIndex, dist);
+    // Arabic-script bucket.
+    if (qAr) {
+      var qLen = qAr.length;
+      var threshold = qLen <= 4 ? 1 : 2;
+      var arMap = state._wordIndex.get(qAr[0]);
+      if (arMap) {
+        for (var len = qLen - threshold; len <= qLen + threshold; len++) {
+          var bucket = arMap.get(len);
+          if (!bucket) continue;
+          for (var bi = 0; bi < bucket.length; bi++) {
+            var entry = bucket[bi];
+            var dist = levAtMost(qAr, entry.word, threshold);
+            if (dist <= threshold) {
+              var existing = scoredMap.get(entry.verseIndex);
+              if (existing === undefined || dist < existing) {
+                scoredMap.set(entry.verseIndex, dist);
+              }
+            }
           }
         }
-        // Also try ms version
-        if (qMs !== qAr) {
-          dist = levAtMost(qMs, entry.word, threshold);
-          if (dist <= threshold) {
-            existing = scoredMap.get(entry.verseIndex);
-            if (existing === undefined || dist < existing) {
-              scoredMap.set(entry.verseIndex, dist);
+      }
+    }
+
+    // Malay/Latin bucket. Only adds candidates when the folded Malay form
+    // differs from the Arabic form (otherwise it would re-score the same
+    // words against the same bucket with identical distances).
+    if (qMs && qMs !== qAr) {
+      var qLenMs = qMs.length;
+      var thresholdMs = qLenMs <= 4 ? 1 : 2;
+      var msMap = state._wordIndex.get(qMs[0]);
+      if (msMap) {
+        for (var lenMs = qLenMs - thresholdMs; lenMs <= qLenMs + thresholdMs; lenMs++) {
+          var msBucket = msMap.get(lenMs);
+          if (!msBucket) continue;
+          for (var msBi = 0; msBi < msBucket.length; msBi++) {
+            var msEntry = msBucket[msBi];
+            var msDist = levAtMost(qMs, msEntry.word, thresholdMs);
+            if (msDist <= thresholdMs) {
+              var msExisting = scoredMap.get(msEntry.verseIndex);
+              if (msExisting === undefined || msDist < msExisting) {
+                scoredMap.set(msEntry.verseIndex, msDist);
+              }
             }
           }
         }
