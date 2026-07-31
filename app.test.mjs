@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-const { foldAr, foldMs, search, surahLabel, MALAY_SURAH_NAMES, levAtMost, arabicHighlightRanges, latinSegments } = await import('./app.js');
+const { foldAr, foldMs, search, surahLabel, MALAY_SURAH_NAMES, levAtMost, arabicHighlightRanges, latinSegments, state } = await import('./app.js');
 const verses = JSON.parse(readFileSync('api/search.json', 'utf8'));
 
 test('diacritic + alef folding (D-06)', () => {
@@ -30,6 +30,26 @@ test('surahLabel format (D-15) incl. user correction', () => {
     'Al-Baqarah (Lembu Betina / The Cow) \u2022 2:255'
   );
   assert.equal(Object.keys(MALAY_SURAH_NAMES).length, 114);
+});
+
+// WR-02: surahLabel must resolve the English name by the surah's `number`
+// field, not by positional array index. A reordered/sparse surahs array would
+// return the wrong name under the old state.surahs[verse.surah - 1] access.
+test('WR-02: surahLabel finds English name by number, not positional index', () => {
+  const saved = state.surahs;
+  state.surahs = [
+    { number: 114, name_en_translation: 'Mankind' },
+    { number: 1, name_en_translation: 'The Opening' },
+  ];
+  try {
+    // Old positional code would read index 0 (number 114) → wrong name.
+    assert.equal(
+      surahLabel({ surah: 1, ayah: 1 }),
+      'Al-Fatihah (Pembukaan / The Opening) \u2022 1:1'
+    );
+  } finally {
+    state.surahs = saved;
+  }
 });
 
 test('substring-within-word matching (D-11)', () => {

@@ -296,9 +296,20 @@ var FEATURED_IDS = [1, 2, 3, 4, 5, 6, 7, 262, 6222, 6223, 6224, 6225];
 function surahLabel(verse) {
   var m = MALAY_SURAH_NAMES[verse.surah];
   var name = m ? m.name : 'Surah ' + verse.surah;
-  var en = (state && state.surahs)
-    ? state.surahs[verse.surah - 1].name_en_translation
-    : (m && m.en ? m.en : '');
+  // WR-02: resolve the English name by the explicit `number` field instead of
+  // assuming surahs is a 1-indexed-by-position array (surah N at index N-1),
+  // so a reordered/keyed/sparse api/surahs.json can't silently return the
+  // wrong name. Falls back to the embedded MALAY_SURAH_NAMES English name.
+  var en = '';
+  if (state && state.surahs) {
+    for (var i = 0; i < state.surahs.length; i++) {
+      if (state.surahs[i].number === verse.surah) {
+        en = state.surahs[i].name_en_translation;
+        break;
+      }
+    }
+  }
+  if (!en && m && m.en) en = m.en;
   var tr = (m && m.tr) ? m.tr + ' / ' : '';
   return name + ' (' + tr + en + ') \u2022 ' + verse.surah + ':' + verse.ayah;
 }
@@ -701,5 +712,5 @@ if (typeof document !== 'undefined') {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { foldAr: foldAr, foldMs: foldMs, search: search, arRegex: arRegex, surahLabel: surahLabel, MALAY_SURAH_NAMES: MALAY_SURAH_NAMES, levAtMost: levAtMost, arabicHighlightRanges: arabicHighlightRanges, latinSegments: latinSegments };
+  module.exports = { foldAr: foldAr, foldMs: foldMs, search: search, arRegex: arRegex, surahLabel: surahLabel, MALAY_SURAH_NAMES: MALAY_SURAH_NAMES, levAtMost: levAtMost, arabicHighlightRanges: arabicHighlightRanges, latinSegments: latinSegments, state: state };
 }
