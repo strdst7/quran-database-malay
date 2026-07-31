@@ -26,7 +26,7 @@ Starting from an existing Quran SQLite database with 134 editions, this project 
 
 Plans:
 - [x] 01-01: Fetch Basmeih translation from public API and stage the data
-- [ ] 01-02: Add edition + ayah_edition rows to SQLite; verify integrity
+- [x] 01-02: Add edition + ayah_edition rows to SQLite; verify integrity
 
 ### Phase 2: JSON API Generation
 **Goal**: A generator script produces per-surah JSON files and a full `search.json` index, each verse carrying Arabic + Malay + references
