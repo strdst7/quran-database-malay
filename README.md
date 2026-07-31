@@ -2,6 +2,8 @@
 
 > Cari ayat Al-Quran mengikut teks Arab dan **terjemahan Melayu Basmeih** — terus dalam pelayar, atau melalui `curl`. Indeks penuh 6,236 ayat dimuat terus ke pelayar anda.
 
+> 📖 Versi penuh dalam Bahasa Melayu tersedia di [README.ms-MY.md](README.ms-MY.md).
+
 > 🇬🇧 English: A Malay-focused fork of the Quran database — search the full Quran by Arabic text or the **Basmeih Malay translation**, in the browser or from the command line. The entire 6,236-verse index loads straight into your browser.
 
 > 🍴 **Fork** of [`AbdullahGhanem/quran-database`](https://github.com/AbdullahGhanem/quran-database) — refocused on the Basmeih (`ms.basmeih`) Malay translation, with a static JSON API on GitHub Pages and a QuestUI-styled browser search page.
@@ -335,13 +337,59 @@ A fantasy/RPG-styled page tuned for reading the Quran — warm dark background, 
 
 ## API reference
 
-Base URL: `https://C-Fu.github.io/quran-database-malay`
+Base URL: `https://C-Fu.github.io/quran-database-malay` — public, no auth, no rate limit (static CDN). Every response is `Content-Type: application/json`, UTF-8.
 
-| Endpoint | Description |
+| Endpoint | Returns |
 | --- | --- |
-| `GET /api/surah/{n}.json` | All ayahs of surah `n` (1–114), each `{arabic, malay, surah, ayah, id}` |
-| `GET /api/search.json` | Full search index — all 6,236 verses (flat array, global id order 1–6236) |
-| `GET /api/surahs.json` | Metadata for all 114 surahs |
+| `GET /api/surah/{n}.json` | Array of all ayahs in surah `n` (1–114) |
+| `GET /api/search.json` | Flat array of all 6,236 verses, in global-id order |
+| `GET /api/surahs.json` | Array of metadata for all 114 surahs |
+
+### `GET /api/surah/{n}.json`
+All ayahs of a surah — each verse carries Arabic + Basmeih Malay.
+
+```bash
+curl https://C-Fu.github.io/quran-database-malay/api/surah/2.json   # Al-Baqarah
+```
+
+Response — an array with one object per ayah (length = ayah count, e.g. **286** for Al-Baqarah). `id` is the global ayah id (1–6236):
+```json
+[
+  {"arabic":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ الٓمٓ","malay":"Alif, Laam, Miim.","surah":2,"ayah":1,"id":8}
+  // …285 more verses (ayah 2..286)
+]
+```
+
+### `GET /api/search.json`
+The full search index — a **3.2 MB** flat array of all 6,236 verses in global-id order. Download once, then filter locally with `jq` / PowerShell / Python.
+
+```bash
+# How many verses mention "rahmat" in the Malay translation? (case-sensitive)
+curl -s https://C-Fu.github.io/quran-database-malay/api/search.json \
+  | jq '[.[] | select(.malay | contains("rahmat"))] | length'   # → 174
+```
+
+Single verse object (id 1 = Al-Fatiha 1:1):
+```json
+{"arabic":"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ","malay":"Dengan nama Allah, Yang Maha Pemurah, lagi Maha Mengasihani.","surah":1,"ayah":1,"id":1}
+```
+
+> Case-insensitive version: `select((.malay | ascii_downcase) | contains("rahmat"))`. The Windows PowerShell equivalent (`Where-Object malay -match`) is in the [Quickstart](#from-the-command-line).
+
+### `GET /api/surahs.json`
+Metadata for all 114 surahs.
+
+```bash
+curl https://C-Fu.github.io/quran-database-malay/api/surahs.json
+```
+
+Response (first 2 of 114):
+```json
+[
+  {"number":1,"name_ar":"سورة الفاتحة","name_en":"Al-Faatiha","name_en_translation":"The Opening","type":"Meccan","ayah_count":7},
+  {"number":2,"name_ar":"سورة البقرة","name_en":"Al-Baqara","name_en_translation":"The Cow","type":"Medinan","ayah_count":286}
+]
+```
 
 The `api/` directory is **gitignored** and built by GitHub Actions on every push to `main`, then deployed to GitHub Pages — so the JSON always reflects the latest committed data.
 
