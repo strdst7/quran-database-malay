@@ -33,7 +33,7 @@ jobs:
       - name: Validate API
         run: python3 generate_json_api.py --validate
       - name: Stage site
-        run: mkdir -p _site && cp -r api _site/
+        run: mkdir -p _site && cp -r api _site/ && cp index.html style.css app.js _site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
