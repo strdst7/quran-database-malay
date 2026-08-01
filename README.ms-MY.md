@@ -20,6 +20,24 @@
 
 ---
 
+## Kandungan
+
+- [Panduan Mula Cepat](#panduan-mula-cepat)
+- [Apakah projek ini](#apakah-projek-ini)
+- [Bagaimana semuanya berfungsi](#bagaimana-semuanya-berfungsi)
+- [Tiga skrip Python](#tiga-skrip-python)
+- [Skema pangkalan data](#skema-pangkalan-data)
+- [Algoritma carian](#algoritma-carian)
+- [Antara Muka Carian (QuestUI)](#antara-muka-carian-questui)
+- [Rujukan API](#rujukan-api)
+- [Struktur projek](#struktur-projek)
+- [Menyumbang](#menyumbang)
+- [Penghargaan & lesen](#penghargaan--lesen)
+
+> Dokumen berkaitan: [API.ms-MY.md](API.ms-MY.md) (rujukan API penuh), [BASMEIH.ms-MY.md](BASMEIH.ms-MY.md) (latar belakang terjemahan + peraturan lipatan), [CONTRIBUTING.md](CONTRIBUTING.md), [llms.txt](llms.txt). Versi Inggeris: [README.md](README.md).
+
+---
+
 ## Panduan Mula Cepat
 
 ### Dalam pelayar anda

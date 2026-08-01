@@ -1,0 +1,59 @@
+# Quran Database Malay
+
+> Malay-focused Quran JSON API + browser search page. Static, public, no auth. Arabic + Basmeih (ms.basmeih, "Tafsir Pimpinan Ar-Rahman") Malay translation for all 6,236 verses, across 114 surahs. Hosted on GitHub Pages.
+
+- Site: https://C-Fu.github.io/quran-database-malay/
+- Repo: https://github.com/C-Fu/quran-database-malay
+- Base API URL: https://C-Fu.github.io/quran-database-malay
+- License: code = MIT; Quran text = public domain; Basmeih translation retains its source's licensing.
+
+## Endpoints (all GET, application/json, UTF-8, CORS Access-Control-Allow-Origin: *, cache max-age=600)
+
+- [GET /api/surah/{n}.json](https://C-Fu.github.io/quran-database-malay/api/surah/2.json): JSON array of every ayah in surah `n` (1-114). Length = ayah count (e.g. 286 for Al-Baqarah). Returns 404 for out-of-range or non-integer `n`.
+- [GET /api/search.json](https://C-Fu.github.io/quran-database-malay/api/search.json): flat JSON array of all 6,236 verses in global-id order (~3.2 MB, content-length 3213062). The full search index.
+- [GET /api/surahs.json](https://C-Fu.github.io/quran-database-malay/api/surahs.json): JSON array of metadata for all 114 surahs.
+
+## Verse object shape (exactly 5 fields, every verse)
+
+```json
+{"arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ", "malay": "Dengan nama Allah, Yang Maha Pemurah, lagi Maha Mengasihani.", "surah": 1, "ayah": 1, "id": 1}
+```
+
+- arabic (string): Quran text with full diacritics.
+- malay (string): Basmeih Malay translation.
+- surah (int 1-114), ayah (int, within-surah number).
+- id (int 1-6236): GLOBAL ayah id. Surah 1 (Al-Fatihah) is ids 1-7, so surah 2 / ayah 1 has id 8. Not contiguous per-surah.
+- "ayah" = verse (Arabic آية, "sign/verse"; = "ayat" in Malay), NOT the Malay word "ayah" (father).
+
+## How to query (NO server-side search, NO query params, NO pagination)
+
+Fetch a whole file, then filter client-side.
+
+- Bash + jq:   `curl -s https://C-Fu.github.io/quran-database-malay/api/search.json | jq '[.[] | select(.malay | contains("rahmat"))]'`
+- jq case-insensitive:   `select((.malay | ascii_downcase) | contains("rahmat"))`
+- jq by surah+ayah:   `select(.surah==2 and .ayah==255)`
+- PowerShell (no jq):   `(Invoke-RestMethod https://C-Fu.github.io/quran-database-malay/api/search.json) | Where-Object malay -match 'rahmat'`
+- Python:   `verses = json.load(urllib.request.urlopen(".../api/search.json"))` then list comprehension
+- Browser JS:   `const v = await fetch(url).then(r=>r.json())` (CORS is open)
+
+## Search behaviour (browser page + same folding for your own clients)
+
+- Arabic folding: normalises alef variants (آ أ إ ٱ -> ا), tā' marbūṭah ة -> ه, alef maqṣūra ى -> ي, strips tatweel + tashkeel + Quranic signs. Typing الله matches بِسْمِ ٱللَّهِ.
+- Malay/Latin folding: NFD decompose, strip combining marks (U+0300-036F), lowercase. Typing BERIMAN matches "beriman".
+- Multi-word queries are AND across terms; one search box covers both Arabic and Malay fields; results in global-id order; substring-within-words matching.
+
+## Important gotchas
+
+- Basmeih uses TRADITIONAL Malay terms: "sembahyang" (NOT "solat"), "syurga" (NOT "surga"). Modern/Indonesian synonyms will return zero matches.
+- 404 bodies are GitHub Pages HTML, not JSON. Check HTTP status / Content-Type before json-parsing. curl: use -f / --fail.
+- No OPTIONS / preflight support (returns 405). Simple cross-origin GET works; custom-header requests that trigger a preflight will fail.
+- Basmala is sometimes merged into the first ayah of a surah in the source data (e.g. surah 2 / ayah 1). Data-source quirk, not an API bug.
+- The database (quran.db) has 134 editions; the JSON API exposes only Arabic + Basmeih Malay.
+
+## Documentation (markdown in the repository)
+
+- [README.md](https://github.com/C-Fu/quran-database-malay/blob/main/README.md): project overview, quickstart, architecture, algorithms.
+- [API.md](https://github.com/C-Fu/quran-database-malay/blob/main/API.md): full API reference with macOS/Linux/Windows examples, caching, CORS, limitations, errors.
+- [BASMEIH.md](https://github.com/C-Fu/quran-database-malay/blob/main/BASMEIH.md): the Basmeih translation - background, Malay terminology stats, folding rules, accuracy vs tafsir.
+- [CONTRIBUTING.md](https://github.com/C-Fu/quran-database-malay/blob/main/CONTRIBUTING.md): how to contribute (hafiz, DBP, scholars, linguists, developers welcome).
+- [README.ms-MY.md](https://github.com/C-Fu/quran-database-malay/blob/main/README.ms-MY.md), [API.ms-MY.md](https://github.com/C-Fu/quran-database-malay/blob/main/API.ms-MY.md), [BASMEIH.ms-MY.md](https://github.com/C-Fu/quran-database-malay/blob/main/BASMEIH.ms-MY.md): Bahasa Melayu versions.

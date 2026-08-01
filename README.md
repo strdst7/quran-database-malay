@@ -22,6 +22,24 @@
 
 ---
 
+## Contents
+
+- [Quickstart](#quickstart)
+- [What this is](#what-this-is)
+- [How it all works](#how-it-all-works)
+- [The three Python scripts](#the-three-python-scripts)
+- [Database schema](#database-schema)
+- [The search algorithms](#the-search-algorithms)
+- [Search UI (QuestUI)](#search-ui-questui)
+- [API reference](#api-reference)
+- [Project structure](#project-structure)
+- [Contributing](#contributing)
+- [Credits & license](#credits--license)
+
+> Companion docs: [API.md](API.md) (full API reference), [BASMEIH.md](BASMEIH.md) (translation background + folding rules), [CONTRIBUTING.md](CONTRIBUTING.md), [llms.txt](llms.txt) (for LLMs). Bahasa Melayu: [README.ms-MY.md](README.ms-MY.md).
+
+---
+
 ## Quickstart
 
 ### In your browser
