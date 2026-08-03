@@ -4,3 +4,7 @@ api/
 
 # Python
 __pycache__/
+
+# Local database (generated from the dump; ship quran.db.gz instead)
+quran.db
+quran.sql

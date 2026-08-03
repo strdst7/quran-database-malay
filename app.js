@@ -693,6 +693,68 @@ function loadIndex() {
 }
 
 // ── Init (DOM wiring, called when document is available) ──────────────────────
+// ── Selection popup: search the highlighted text (Malay or Arabic) ──────────
+var SEL_MAX_CHARS = 200;   // don't offer to search very large selections
+
+function hideSelectionPopup() {
+  if (els.selPopup) els.selPopup.hidden = true;
+}
+
+function searchSelectedText() {
+  if (!state.ready || !state._selectedText) return;
+  els.searchInput.value = state._selectedText;
+  hideSelectionPopup();
+  if (window.getSelection) {
+    try { window.getSelection().removeAllRanges(); } catch (e) { /* ignore */ }
+  }
+  runSearch();
+  els.searchInput.focus();
+}
+
+function positionSelectionPopup(rect) {
+  var popup = els.selPopup;
+  popup.hidden = false;                       // unhide to measure
+  var ph = popup.offsetHeight || 36;
+  var pw = popup.offsetWidth || 140;
+  var gap = 8;
+  var vw = window.innerWidth, vh = window.innerHeight;
+  if (pw > vw - 16) pw = vw - 16;
+  var aboveY = rect.top - ph - gap;
+  var placeBelow = aboveY < 8;
+  var y = placeBelow ? rect.bottom + gap : aboveY;
+  if (placeBelow && (y + ph > vh - 8)) {
+    y = Math.max(8, rect.top - ph - gap);     // flip back above if below overflows
+  }
+  var x = rect.left + (rect.width / 2) - (pw / 2);
+  var minX = 8, maxX = vw - pw - 8;
+  if (x < minX) x = minX;
+  if (x > maxX) x = maxX;
+  popup.style.top = (y + window.scrollY) + 'px';
+  popup.style.left = (x + window.scrollX) + 'px';
+}
+
+function handleSelectionEnd() {
+  if (!state.ready || !els.selPopup) return;
+  var sel = window.getSelection ? window.getSelection() : null;
+  if (!sel || sel.isCollapsed || sel.rangeCount === 0) { hideSelectionPopup(); return; }
+  var text = sel.toString().trim();
+  if (!text || text.length > SEL_MAX_CHARS) { hideSelectionPopup(); return; }
+  // ignore selections inside form fields, the popup itself, or editable regions
+  var node = sel.anchorNode;
+  var parent = node && node.nodeType === 1 ? node : (node && node.parentElement);
+  if (parent && parent.closest && parent.closest('input, textarea, .selection-popup, [contenteditable="true"]')) {
+    hideSelectionPopup();
+    return;
+  }
+  var rect = sel.getRangeAt(0).getBoundingClientRect();
+  if (!rect || (rect.width === 0 && rect.height === 0)) { hideSelectionPopup(); return; }
+  state._selectedText = text;
+  var snippet = text.length > 40 ? text.slice(0, 40) + '\u2026' : text;
+  els.selPopupBtn.title = 'Cari: ' + text;
+  els.selPopupBtn.setAttribute('aria-label', 'Cari teks yang dipilih: ' + snippet);
+  positionSelectionPopup(rect);
+}
+
 function init() {
   // Cache DOM refs
   els.hero = document.getElementById('hero');
@@ -728,6 +790,21 @@ function init() {
   });
 
   els.showMore.addEventListener('click', showMore);
+
+  // Selection popup: show "Cari teks ini" above any highlighted verse text
+  els.selPopup = document.getElementById('selection-popup');
+  els.selPopupBtn = document.getElementById('selection-popup-btn');
+  if (els.selPopup && els.selPopupBtn) {
+    // prevent the button's mousedown from stealing focus / collapsing the selection
+    els.selPopupBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    els.selPopupBtn.addEventListener('click', searchSelectedText);
+    document.addEventListener('mouseup', handleSelectionEnd);
+    document.addEventListener('keyup', handleSelectionEnd);
+    document.addEventListener('scroll', hideSelectionPopup, true);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hideSelectionPopup();
+    });
+  }
 
   // Start loading
   loadIndex();

@@ -119,6 +119,52 @@ body {
   }
 }
 
+/* ─── Selection popup (search the highlighted text) ──────────────────────── */
+.selection-popup {
+  position: absolute;
+  z-index: 60;
+  background: var(--surface-raised);
+  border: 1px solid var(--accent-gold);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  max-width: 280px;
+}
+
+.selection-popup__btn {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-primary);
+  font: 600 var(--text-label)/1 var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selection-popup__btn:hover,
+.selection-popup__btn:focus-visible {
+  background: var(--accent-gold);
+  color: var(--bg);
+  outline: none;
+}
+
+.selection-popup__btn:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selection-popup,
+  .selection-popup__btn {
+    transition: none;
+  }
+}
+
 /* ─── Utility ───────────────────────────────────────────────────────────── */
 [hidden] { display: none !important; }
 .is-hidden { display: none !important; }
