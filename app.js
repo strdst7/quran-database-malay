@@ -517,7 +517,6 @@ function renderFeatured() {
 function showErrorState() {
   els.loading.hidden = true;
   els.featured.hidden = true;
-  els.hero.classList.add('is-hidden');
   els.error.hidden = false;
   els.status.textContent = 'Gagal memuatkan indeks';
   els.searchInput.disabled = true;
@@ -536,8 +535,17 @@ function showPreSearchState() {
   els.status.textContent = '';
 }
 
+// Scroll the search bar to the top of the viewport on a fresh search, so the
+// hero stays in the document (scroll up to see it) but results get the space.
+// No-op if the search bar is already at/above the top - avoids yanking on refine.
+function scrollSearchToTop() {
+  if (!els.searchInput || !els.searchInput.getBoundingClientRect) return;
+  if (els.searchInput.getBoundingClientRect().top <= 8) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  els.searchInput.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+}
+
 function showResultsState(count, total) {
-  els.hero.classList.add('is-hidden');
   els.featured.hidden = true;
   els.loading.hidden = true;
   els.error.hidden = true;
@@ -555,6 +563,7 @@ function showResultsState(count, total) {
   }
 
   els.status.textContent = total + ' ayat ditemui';
+  scrollSearchToTop();
 }
 
 // WR-01: self-contained — hide every other section so the no-results card is
@@ -562,7 +571,6 @@ function showResultsState(count, total) {
 // the body message (previously unreachable because the only caller passed no
 // terms).
 function showNoResultsState(terms) {
-  els.hero.classList.add('is-hidden');
   els.featured.hidden = true;
   els.loading.hidden = true;
   els.error.hidden = true;
@@ -576,6 +584,7 @@ function showNoResultsState(terms) {
   }
 
   els.status.textContent = 'Tiada padanan ditemui';
+  scrollSearchToTop();
 }
 
 // ── Run search (called by debounced input) ────────────────────────────────────
